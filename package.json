@@ -1,0 +1,48 @@
+{
+  "name": "google-sheets-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.51",
+    "@types/gapi.client.sheets": "^4.0.2",
+    "@types/jest": "24.0.23",
+    "moment": "^2.24.0",
+    "@types/node": "^13.9.0",
+    "@types/react": "^16.8.1",
+    "@types/react-click-outside": "^3.0.3",
+    "@types/react-dom": "^16.0.11",
+    "prettier": "1.19.1",
+    "react-scripts": "3.2.0",
+    "typescript": "3.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "prettier": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.css\" \"src/*.ts\" \"src/*.tsx\"",
+    "tslint": "npm run lint",
+    "lint": "eslint src --ext .ts --ext .tsx"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

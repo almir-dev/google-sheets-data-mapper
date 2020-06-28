@@ -1,6 +1,6 @@
 import React from "react";
 import "reflect-metadata";
-import { Student } from "./api/entity/Student";
+import { GoogleVisualisationDemo } from "./GoogleVisualisationDemo";
 
 export class App extends React.Component {
   render() {
@@ -8,9 +8,7 @@ export class App extends React.Component {
   }
 
   private readonly clickHandler = () => {
-    Student.findAll().then(response => {
-      console.log("WWW result is ", response);
-    });
+    GoogleVisualisationDemo.makeApiCall();
   };
 }
 

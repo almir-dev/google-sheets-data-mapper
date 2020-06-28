@@ -18,6 +18,16 @@ class PersistenceManagerImpl {
     gapi.load("client:auth2", () => this.initClient(config));
   }
 
+  getActiveSpreadsheetUrl() {
+    const spreadsheetUrl1 =
+      "https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/";
+    return (
+      spreadsheetUrl1 +
+      "gviz/tq?access_token=" +
+      encodeURIComponent(gapi.auth.getToken().access_token)
+    );
+  }
+
   private initClient(config: PersistenceManagerConfig) {
     const { scope, apiKey, clientId } = config;
     return gapi.client
@@ -46,7 +56,9 @@ class PersistenceManagerImpl {
       .getAuthInstance()
       .signIn()
       .then(
-        response => Promise.resolve(response),
+        response => {
+          return Promise.resolve(response);
+        },
         (reason: string) =>
           Promise.reject("Failed to sign into google account " + reason)
       )

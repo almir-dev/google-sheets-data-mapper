@@ -1,4 +1,5 @@
-import { Column, Dto, Entity } from "./EntityDescriptor";
+import { Entity } from "./Entity";
+import { Column, Dto } from "./Dto";
 
 @Entity
 export class Student extends Dto {

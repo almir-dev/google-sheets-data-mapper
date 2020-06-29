@@ -16,3 +16,5 @@ export class Student extends Dto {
   @Column("Extracurricular Activity", "F")
   eActivity: string;
 }
+
+export const StudentInstance = new Student();

@@ -1,3 +1,5 @@
+import { Criteria } from "./Criteria";
+
 const columnMetadataKey = Symbol("column");
 
 export interface ColumnMetaData {
@@ -18,4 +20,6 @@ export class Dto {
   }
 
   static findAll<T>(onResult: (data: T[]) => void) {}
+
+  static find<T>(criteria: Criteria, onResult: (data: T[]) => void) {}
 }

@@ -1,9 +1,12 @@
-import { Student } from "./api/entity/Student";
+import { Student, StudentInstance } from "./api/entity/Student";
+import { whereEq } from "./api/entity/Criteria";
 
 class GoogleVisualisationDemoImpl {
   makeApiCall() {
-    Student.findAll(data => {
-      console.log("WWW data", data);
+    const criteria = whereEq(StudentInstance.name, "Stacy");
+
+    Student.find(criteria, data => {
+      console.log("WWW filtered data ", data);
     });
   }
 }

@@ -2,8 +2,9 @@ import "reflect-metadata";
 import { EntityManager } from "./EntityManager";
 import { PersistenceManager } from "../PersistenceManager";
 import { EntityService } from "./EntityService";
-import { Criteria, toQueryString } from "./Criteria";
 import { ColumnMetaData, getColumn } from "./Dto";
+import { CriteriaService } from "./CriteriaService";
+import { QueryOperation } from "./QueryOperation";
 
 export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
   EntityManager.register(constructor.name, constructor);
@@ -36,14 +37,13 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
       });
     }
 
-    static find(criteria: Criteria, onResult: (data: T[]) => void) {
-      console.log("WWW criteria", criteria);
-
+    static find(criteria: QueryOperation, onResult: (data: T[]) => void) {
       const query = new google.visualization.Query(
         PersistenceManager.getActiveSpreadsheetUrl()
       );
 
-      const queryString = "select * " + toQueryString(criteria);
+      const queryString =
+        "select * where " + CriteriaService.toQueryString(criteria);
       console.log("WWW critieria is ", queryString);
 
       query.setQuery(queryString);

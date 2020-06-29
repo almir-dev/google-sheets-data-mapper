@@ -1,4 +1,4 @@
-import { Criteria } from "./Criteria";
+import { QueryOperation } from "./QueryOperation";
 
 const columnMetadataKey = Symbol("column");
 
@@ -21,5 +21,5 @@ export class Dto {
 
   static findAll<T>(onResult: (data: T[]) => void) {}
 
-  static find<T>(criteria: Criteria, onResult: (data: T[]) => void) {}
+  static find<T>(criteria: QueryOperation, onResult: (data: T[]) => void) {}
 }

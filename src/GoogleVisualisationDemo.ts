@@ -1,9 +1,15 @@
 import { Student, StudentInstance } from "./api/entity/Student";
-import { whereEq } from "./api/entity/Criteria";
+import { and, or, whereEq } from "./api/entity/QueryOperation";
 
 class GoogleVisualisationDemoImpl {
   makeApiCall() {
-    const criteria = whereEq(StudentInstance.name, "Stacy");
+    const criteria = and(
+      or(
+        whereEq(StudentInstance.name, "Stacy"),
+        whereEq(StudentInstance.name, "Olivia")
+      ),
+      whereEq(StudentInstance.homeState, "NY")
+    );
 
     Student.find(criteria, data => {
       console.log("WWW filtered data ", data);

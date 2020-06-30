@@ -24,20 +24,25 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
     }
 
     static findAll(onResult: (data: T[]) => void) {
-      const query = new google.visualization.Query(
-        PersistenceManager.getActiveSpreadsheetUrl()
-      );
-      query.setQuery("select * ");
-      query.send(response => {
-        const result: T[] = EntityService.toEntityObjects(
-          response.getDataTable(),
-          this.getName()
-        );
-        onResult(result);
+      return new Promise<any>(resolve => {
+        this.findWithoutCriteria(data => {
+          return resolve(data);
+        });
       });
     }
 
-    static find(criteria: QueryOperation, onResult: (data: T[]) => void) {
+    static find(criteria: QueryOperation): Promise<T[]> {
+      return new Promise<any>(resolve => {
+        this.findByCriteria(criteria, data => {
+          return resolve(data);
+        });
+      });
+    }
+
+    private static findByCriteria(
+      criteria: QueryOperation,
+      onResult: (data: T[]) => void
+    ) {
       const query = new google.visualization.Query(
         PersistenceManager.getActiveSpreadsheetUrl()
       );
@@ -48,6 +53,20 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
 
       query.setQuery(queryString);
 
+      query.send(response => {
+        const result: T[] = EntityService.toEntityObjects(
+          response.getDataTable(),
+          this.getName()
+        );
+        onResult(result);
+      });
+    }
+
+    private static findWithoutCriteria(onResult: (data: T[]) => void) {
+      const query = new google.visualization.Query(
+        PersistenceManager.getActiveSpreadsheetUrl()
+      );
+      query.setQuery("select * ");
       query.send(response => {
         const result: T[] = EntityService.toEntityObjects(
           response.getDataTable(),

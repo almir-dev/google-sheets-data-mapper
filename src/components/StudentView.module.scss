@@ -1,0 +1,13 @@
+.studentView  {
+  height: 100%;
+
+  & .filterSection {
+    border-right: 1px solid #333333;
+    height: 100vh;
+
+  }
+
+  & .dataSection {
+
+  }
+}

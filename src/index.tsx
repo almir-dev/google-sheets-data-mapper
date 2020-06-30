@@ -1,12 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
 import {
   PersistenceManager,
   PersistenceManagerConfig,
   PersistenceManagerScope
 } from "./api/PersistenceManager";
 import { SheetManager } from "./api/SheetManager";
+import { StudentView } from "./components/StudentView";
+import "bootstrap/dist/css/bootstrap.css";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -19,4 +20,19 @@ export const defaultSheetId = "secret";
 PersistenceManager.init(config);
 SheetManager.setActiveSheet(defaultSheetId);
 
-ReactDOM.render(<App />, document.getElementById("root"));
+function AppContent() {
+  const [ready, setReady] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    setTimeout(() => {
+      setReady(true);
+    }, 2000);
+  }, []);
+
+  if (!ready) {
+    return null;
+  }
+
+  return <StudentView />;
+}
+
+ReactDOM.render(<AppContent />, document.getElementById("root"));

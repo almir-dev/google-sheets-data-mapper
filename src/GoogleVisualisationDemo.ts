@@ -11,8 +11,8 @@ class GoogleVisualisationDemoImpl {
       whereEq(StudentInstance.homeState, "NY")
     );
 
-    Student.find(criteria, data => {
-      console.log("WWW filtered data ", data);
+    Student.find(criteria).then(data => {
+      console.log("WWW hahaha", data);
     });
   }
 }

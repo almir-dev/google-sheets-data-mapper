@@ -19,7 +19,11 @@ export class Dto {
     return "";
   }
 
-  static findAll<T>(onResult: (data: T[]) => void) {}
+  static findAll<T>(): Promise<T[]> {
+    return Promise.resolve([]);
+  }
 
-  static find<T>(criteria: QueryOperation, onResult: (data: T[]) => void) {}
+  static find<T>(criteria: QueryOperation): Promise<T[]> {
+    return Promise.resolve([]);
+  }
 }

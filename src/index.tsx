@@ -23,9 +23,8 @@ SheetManager.setActiveSheet(defaultSheetId);
 function AppContent() {
   const [ready, setReady] = React.useState<boolean>(false);
   React.useEffect(() => {
-    setTimeout(() => {
-      setReady(true);
-    }, 2000);
+    PersistenceManager.init(config).then(() => setReady(true));
+    SheetManager.setActiveSheet(defaultSheetId);
   }, []);
 
   if (!ready) {

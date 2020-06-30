@@ -14,10 +14,6 @@ class PersistenceManagerImpl {
     "https://sheets.googleapis.com/$discovery/rest?version=v4"
   ];
 
-  init(config: PersistenceManagerConfig): void {
-    gapi.load("client:auth2", () => this.initClient(config));
-  }
-
   getActiveSpreadsheetUrl() {
     const spreadsheetUrl1 =
       "https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/";
@@ -28,7 +24,22 @@ class PersistenceManagerImpl {
     );
   }
 
-  private initClient(config: PersistenceManagerConfig) {
+  init(config: PersistenceManagerConfig): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.handleInit(config, () => {
+        return resolve();
+      });
+    });
+  }
+
+  private handleInit(
+    config: PersistenceManagerConfig,
+    onInit: () => void
+  ): void {
+    gapi.load("client:auth2", () => this.initClient(config, onInit));
+  }
+
+  private initClient(config: PersistenceManagerConfig, onInit: () => void) {
     const { scope, apiKey, clientId } = config;
     return gapi.client
       .init({
@@ -37,7 +48,10 @@ class PersistenceManagerImpl {
         scope,
         discoveryDocs: this.discoveryDocs
       })
-      .then(this.handleSignIn, this.handleFailedClientInit)
+      .then(() => {
+        this.handleSignIn();
+        onInit();
+      }, this.handleFailedClientInit)
       .catch(this.handleFailedClientInit);
   }
 

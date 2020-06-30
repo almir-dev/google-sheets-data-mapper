@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./StudentView.module.scss";
-import { Student } from "../api/entity/Student";
-import { StudentService } from "./StudentService";
+import { Student } from "../entity/Student";
+import { StudentService } from "../service/StudentService";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 
 export function StudentView() {

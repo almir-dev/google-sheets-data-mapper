@@ -1,4 +1,4 @@
-import { Student } from "../api/entity/Student";
+import { Student } from "../entity/Student";
 
 class StudentServiceImpl {
   getStudents(): Promise<Student[]> {

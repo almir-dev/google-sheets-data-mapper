@@ -1,4 +1,4 @@
-import { QueryOperation } from "./QueryOperation";
+import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
 

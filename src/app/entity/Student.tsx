@@ -1,5 +1,5 @@
-import { Entity } from "./Entity";
-import { Column, Dto } from "./Dto";
+import { Entity } from "../../libs/entity/Entity";
+import { Column, Dto } from "../../libs/entity/Dto";
 
 @Entity
 export class Student extends Dto {

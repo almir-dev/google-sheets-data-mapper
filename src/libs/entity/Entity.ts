@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { EntityManager } from "./EntityManager";
-import { PersistenceManager } from "../PersistenceManager";
+import { PersistenceManager } from "../persistence/PersistenceManager";
 import { EntityService } from "./EntityService";
 import { ColumnMetaData, getColumn } from "./Dto";
-import { CriteriaService } from "./CriteriaService";
-import { QueryOperation } from "./QueryOperation";
+import { CriteriaService } from "../criteria/CriteriaService";
+import { QueryOperation } from "../criteria/QueryOperation";
 
 export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
   EntityManager.register(constructor.name, constructor);

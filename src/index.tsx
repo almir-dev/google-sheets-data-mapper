@@ -4,9 +4,9 @@ import {
   PersistenceManager,
   PersistenceManagerConfig,
   PersistenceManagerScope
-} from "./api/PersistenceManager";
-import { SheetManager } from "./api/SheetManager";
-import { StudentView } from "./components/StudentView";
+} from "./libs/persistence/PersistenceManager";
+import { SheetManager } from "./libs/SheetManager";
+import { StudentView } from "./app/components/StudentView";
 import "bootstrap/dist/css/bootstrap.css";
 
 const config: PersistenceManagerConfig = {

@@ -1,5 +1,8 @@
 export enum QueryOperationType {
-  EQ = "="
+  EQ = "=",
+  GT = ">",
+  LT = "<",
+  LIKE = "LIKE"
 }
 
 export enum QueryLogicType {
@@ -25,6 +28,21 @@ export function whereEq(source: string, target: string): SingleQueryOperation {
   return { type: QueryOperationType.EQ, source, target };
 }
 
+export function whereGt(source: string, target: string): SingleQueryOperation {
+  return { type: QueryOperationType.GT, source, target };
+}
+
+export function whereLt(source: string, target: string): SingleQueryOperation {
+  return { type: QueryOperationType.LT, source, target };
+}
+
+export function whereLike(
+  source: string,
+  target: string
+): SingleQueryOperation {
+  return { type: QueryOperationType.LIKE, source, target };
+}
+
 export function or(...operations: QueryOperation[]): PluralQueryOperation {
   return {
     logic: QueryLogicType.OR,
@@ -33,6 +51,13 @@ export function or(...operations: QueryOperation[]): PluralQueryOperation {
 }
 
 export function and(...operations: QueryOperation[]): PluralQueryOperation {
+  return {
+    logic: QueryLogicType.AND,
+    operations
+  };
+}
+
+export function not(...operations: QueryOperation[]): PluralQueryOperation {
   return {
     logic: QueryLogicType.AND,
     operations

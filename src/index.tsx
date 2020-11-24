@@ -17,9 +17,6 @@ const config: PersistenceManagerConfig = {
 
 export const defaultSheetId = "secret";
 
-PersistenceManager.init(config);
-SheetManager.setActiveSheet(defaultSheetId);
-
 function AppContent() {
   const [ready, setReady] = React.useState<boolean>(false);
   React.useEffect(() => {

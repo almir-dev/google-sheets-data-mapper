@@ -49,7 +49,6 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
 
       const queryString =
         "select * where " + CriteriaService.toQueryString(criteria);
-      console.log("WWW critieria is ", queryString);
 
       query.setQuery(queryString);
 

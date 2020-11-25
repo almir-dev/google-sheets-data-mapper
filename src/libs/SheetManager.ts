@@ -1,38 +1,14 @@
-export type SheetResponse = PromiseLike<
-  any[][] | Promise<any[][] | undefined> | undefined
->;
+import { PersistenceManager } from "./persistence/PersistenceManager";
 
-interface SheetResults {
-  values: any[][];
-  header: any[];
-}
+type GoogleQueryResponse = google.visualization.QueryResponse;
+type GoogleResponse<T> = gapi.client.Response<T>;
+type GoogleAppendValuesResponse = gapi.client.sheets.AppendValuesResponse;
 
 class SheetManagerImpl {
   private activeSpreadSheetId: string = "";
 
   setActiveSheet(activeSpreadSheetId: string) {
     this.activeSpreadSheetId = activeSpreadSheetId;
-  }
-
-  read(range: string): Promise<SheetResults> {
-    const promise = gapi.client.sheets.spreadsheets.values
-      .get({
-        spreadsheetId: this.activeSpreadSheetId,
-        range
-      })
-      .then((response: gapi.client.Response<gapi.client.sheets.ValueRange>) => {
-        const values: any[][] = response.result.values
-          ? removeFirst(response.result.values)
-          : [[]];
-        const header: any[] = response.result.values
-          ? response.result.values[0]
-          : [];
-        const result: SheetResults = { values, header };
-
-        return result;
-      });
-
-    return Promise.resolve(promise);
   }
 
   update() {
@@ -64,36 +40,53 @@ class SheetManagerImpl {
     console.log("WWW done ...");
   }
 
-  create(rowValues: string[]) {
-    console.log("WWW create ...");
-
+  create(
+    rowValues: string[]
+  ): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
     const values = [rowValues];
-    const body = { values: values };
+    const resource = { values: values };
 
-    gapi.client.sheets.spreadsheets.values
-      .append({
-        spreadsheetId: this.activeSpreadSheetId,
-        range: "A1",
-        valueInputOption: "RAW",
-        insertDataOption: "INSERT_ROWS",
-        resource: body
-      })
-      .then(
-        response => {
-          const result = response.result;
-          console.log(`WWW ${result} cells updated.`);
-        },
-        reason => {
-          console.log("WWW failed to update because ", reason);
-        }
-      );
+    const request = {
+      spreadsheetId: this.activeSpreadSheetId,
+      range: "A1",
+      valueInputOption: "RAW",
+      insertDataOption: "INSERT_ROWS",
+      resource
+    };
 
-    console.log("WWW done ...");
+    return new Promise<GoogleResponse<GoogleAppendValuesResponse>>(resolve => {
+      gapi.client.sheets.spreadsheets.values.append(request).then(response => {
+        const result = response.result;
+        resolve(response);
+      });
+    });
+  }
+
+  findWithoutCriteria(): Promise<GoogleQueryResponse> {
+    const query = new google.visualization.Query(
+      PersistenceManager.getActiveSpreadsheetUrl()
+    );
+    query.setQuery("select * ");
+
+    return new Promise<GoogleQueryResponse>(resolve => {
+      query.send(response => {
+        resolve(response);
+      });
+    });
+  }
+
+  findByCriteria(searchQuery: string): Promise<GoogleQueryResponse> {
+    const query = new google.visualization.Query(
+      PersistenceManager.getActiveSpreadsheetUrl()
+    );
+
+    query.setQuery("select * where " + searchQuery);
+    return new Promise<GoogleQueryResponse>(resolve => {
+      query.send(response => {
+        resolve(response);
+      });
+    });
   }
 }
 
 export const SheetManager = new SheetManagerImpl();
-
-function removeFirst(input: any[][]) {
-  return input.filter((e, index) => index !== 0);
-}

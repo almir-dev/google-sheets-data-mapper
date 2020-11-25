@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { EntityManager } from "./EntityManager";
-import { PersistenceManager } from "../persistence/PersistenceManager";
 import { EntityService } from "./EntityService";
 import { ColumnMetaData, getColumn } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
@@ -24,19 +23,26 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
       return constructor.name;
     }
 
-    static findAll(onResult: (data: T[]) => void) {
-      return new Promise<any>(resolve => {
-        this.findWithoutCriteria(data => {
-          return resolve(data);
-        });
+    static findAll(): Promise<T[]> {
+      return SheetManager.findWithoutCriteria().then(queryResponse => {
+        const result: T[] = EntityService.toEntityObjects(
+          queryResponse.getDataTable(),
+          this.getName()
+        );
+
+        return Promise.resolve(result);
       });
     }
 
     static find(criteria: QueryOperation): Promise<T[]> {
-      return new Promise<any>(resolve => {
-        this.findByCriteria(criteria, data => {
-          return resolve(data);
-        });
+      const query = CriteriaService.toQueryString(criteria);
+      return SheetManager.findByCriteria(query).then(queryResponse => {
+        const result: T[] = EntityService.toEntityObjects(
+          queryResponse.getDataTable(),
+          this.getName()
+        );
+
+        return Promise.resolve(result);
       });
     }
 
@@ -48,44 +54,8 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
         values.push(fieldValue);
       }
 
-      return new Promise<T>(resolve => {
-        SheetManager.create(values);
-      });
-    }
-
-    private static findByCriteria(
-      criteria: QueryOperation,
-      onResult: (data: T[]) => void
-    ) {
-      const query = new google.visualization.Query(
-        PersistenceManager.getActiveSpreadsheetUrl()
-      );
-
-      const queryString =
-        "select * where " + CriteriaService.toQueryString(criteria);
-
-      query.setQuery(queryString);
-
-      query.send(response => {
-        const result: T[] = EntityService.toEntityObjects(
-          response.getDataTable(),
-          this.getName()
-        );
-        onResult(result);
-      });
-    }
-
-    private static findWithoutCriteria(onResult: (data: T[]) => void) {
-      const query = new google.visualization.Query(
-        PersistenceManager.getActiveSpreadsheetUrl()
-      );
-      query.setQuery("select * ");
-      query.send(response => {
-        const result: T[] = EntityService.toEntityObjects(
-          response.getDataTable(),
-          this.getName()
-        );
-        onResult(result);
+      return SheetManager.create(values).then(() => {
+        return Promise.resolve(entry);
       });
     }
   };

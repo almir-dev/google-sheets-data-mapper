@@ -26,4 +26,8 @@ export class Dto {
   static find<T>(criteria: QueryOperation): Promise<T[]> {
     return Promise.resolve([]);
   }
+
+  static create<T>(entry: T): Promise<T> {
+    return Promise.resolve(({} as unknown) as T);
+  }
 }

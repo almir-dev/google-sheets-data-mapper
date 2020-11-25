@@ -5,6 +5,7 @@ import { EntityService } from "./EntityService";
 import { ColumnMetaData, getColumn } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
+import { SheetManager } from "../SheetManager";
 
 export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
   EntityManager.register(constructor.name, constructor);
@@ -36,6 +37,19 @@ export function Entity<T extends { new (...args: any[]): {} }>(constructor: T) {
         this.findByCriteria(criteria, data => {
           return resolve(data);
         });
+      });
+    }
+
+    static create(entry: T): Promise<T> {
+      const values: string[] = [];
+      for (const key of Object.keys(entry)) {
+        // @ts-ignore
+        const fieldValue = entry[key];
+        values.push(fieldValue);
+      }
+
+      return new Promise<T>(resolve => {
+        SheetManager.create(values);
       });
     }
 

@@ -1,42 +1,70 @@
 import { PersistenceManager } from "./persistence/PersistenceManager";
 
-type GoogleQueryResponse = google.visualization.QueryResponse;
+export type GoogleQueryResponse = google.visualization.QueryResponse;
 type GoogleResponse<T> = gapi.client.Response<T>;
 type GoogleAppendValuesResponse = gapi.client.sheets.AppendValuesResponse;
 
+interface SheetResults {
+  rows: RowResult[];
+}
+
+interface RowResult {
+  range: string;
+  values: any[];
+}
+
 class SheetManagerImpl {
-  private activeSpreadSheetId: string = "";
+  private activeSpreadSheetId = "";
 
   setActiveSheet(activeSpreadSheetId: string) {
     this.activeSpreadSheetId = activeSpreadSheetId;
   }
 
-  update() {
-    console.log("WWW updating ...");
-
-    const values = [
-      ["Jack", "Male", "4.Senior", "NY", "Computer Science", "Football"]
-    ];
-    const body = {
-      values: values
-    };
-    gapi.client.sheets.spreadsheets.values
-      .update({
+  read(range: string): Promise<SheetResults> {
+    const promise = gapi.client.sheets.spreadsheets.values
+      .get({
         spreadsheetId: this.activeSpreadSheetId,
-        range: "A30",
-        valueInputOption: "RAW",
-        resource: body
+        range
       })
-      .then(
-        response => {
-          const result = response.result;
-          console.log(`WWW ${result.updatedCells} cells updated.`);
-        },
-        reason => {
-          console.log("WWW failed to update because ", reason);
-        }
-      );
+      .then((response: gapi.client.Response<gapi.client.sheets.ValueRange>) => {
+        const values: any[][] = response.result.values
+          ? removeFirst(response.result.values)
+          : [[]];
 
+        const rows: RowResult[] = [];
+        values.forEach((value, index) => {
+          const range = "A" + String(index + 2);
+          rows.push({ range, values: value });
+        });
+
+        return { rows };
+      });
+
+    return Promise.resolve(promise);
+  }
+
+  update(values: string[], rangeList: string[]) {
+    console.log("WWW updating ...");
+    const body = { values: [values] };
+
+    // rangeList.forEach(range => {
+    //   gapi.client.sheets.spreadsheets.values
+    //       .update({
+    //         spreadsheetId: this.activeSpreadSheetId,
+    //         range: "A30",
+    //         valueInputOption: "RAW",
+    //         resource: body
+    //       })
+    //       .then(
+    //           response => {
+    //             const result = response.result;
+    //             console.log(`WWW ${result.updatedCells} cells updated.`);
+    //           },
+    //           reason => {
+    //             console.log("WWW failed to update because ", reason);
+    //           }
+    //       );
+    // })
     console.log("WWW done ...");
   }
 
@@ -87,6 +115,10 @@ class SheetManagerImpl {
       });
     });
   }
+}
+
+function removeFirst(input: any[][]) {
+  return input.filter((e, index) => index !== 0);
 }
 
 export const SheetManager = new SheetManagerImpl();

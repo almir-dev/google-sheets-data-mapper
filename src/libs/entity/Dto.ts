@@ -30,4 +30,6 @@ export class Dto {
   static create<T>(entry: T): Promise<T> {
     return Promise.resolve(({} as unknown) as T);
   }
+
+  update() {}
 }

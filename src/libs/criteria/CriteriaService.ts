@@ -14,7 +14,6 @@ class CriteriaServiceImpl {
   }
 
   private singleOperationToQueryString(operation: SingleQueryOperation) {
-    console.log("WWW boo", operation);
     const targetString = `'${operation.target}'`;
     return operation.source + " " + operation.type + " " + targetString;
   }

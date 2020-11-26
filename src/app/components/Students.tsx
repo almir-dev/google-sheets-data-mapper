@@ -5,6 +5,10 @@ import React from "react";
 
 const TableColumns: Column<Student>[] = [
   {
+    title: "Id",
+    field: "id"
+  },
+  {
     title: "Student Name",
     field: "name"
   },

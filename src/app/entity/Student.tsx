@@ -3,17 +3,19 @@ import { Column, Dto } from "../../libs/entity/Dto";
 
 @Entity
 export class Student extends Dto {
-  @Column("Student Name", "A")
+  @Column("A")
+  id: string;
+  @Column("B")
   name: string;
-  @Column("Gender", "B")
+  @Column("C")
   gender: string;
-  @Column("Class Level", "C")
+  @Column("D")
   classLevel: string;
-  @Column("Home State", "D")
+  @Column("E")
   homeState: string;
-  @Column("Major", "E")
+  @Column("F")
   major: string;
-  @Column("Extracurricular Activity", "F")
+  @Column("G")
   eActivity: string;
 }
 

@@ -90,11 +90,15 @@ class SheetManagerImpl {
     });
   }
 
-  findWithoutCriteria(): Promise<GoogleQueryResponse> {
-    const query = new google.visualization.Query(
-      PersistenceManager.getActiveSpreadsheetUrl()
-    );
-    query.setQuery("select * ");
+  findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse> {
+    const request = PersistenceManager.getActiveSpreadsheetUrl();
+    const selectQuery = encodeURIComponent("select * ");
+    const sheetQuery = "sheet=" + sheet;
+
+    const dataSourceUrl = request + "&" + selectQuery + "&" + sheetQuery;
+
+    const query = new google.visualization.Query(dataSourceUrl);
+    //query.setQuery("select * ");
 
     return new Promise<GoogleQueryResponse>(resolve => {
       query.send(response => {
@@ -103,12 +107,17 @@ class SheetManagerImpl {
     });
   }
 
-  findByCriteria(searchQuery: string): Promise<GoogleQueryResponse> {
-    const query = new google.visualization.Query(
-      PersistenceManager.getActiveSpreadsheetUrl()
-    );
+  findByCriteria(
+    searchQuery: string,
+    sheet: string
+  ): Promise<GoogleQueryResponse> {
+    const request = PersistenceManager.getActiveSpreadsheetUrl();
+    const selectQuery = encodeURIComponent("select * where " + searchQuery);
+    const sheetQuery = "sheet=" + sheet;
 
-    query.setQuery("select * where " + searchQuery);
+    const dataSourceUrl = request + "&" + selectQuery + "&" + sheetQuery;
+    const query = new google.visualization.Query(dataSourceUrl);
+
     return new Promise<GoogleQueryResponse>(resolve => {
       query.send(response => {
         resolve(response);

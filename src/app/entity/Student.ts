@@ -1,8 +1,9 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto } from "../../libs/entity/Dto";
+import { Column, Dto, PrimaryKey } from "../../libs/entity/Dto";
 
-@Entity
+@Entity("StudentTable")
 export class Student extends Dto {
+  @PrimaryKey()
   @Column("A")
   id: string;
   @Column("B")

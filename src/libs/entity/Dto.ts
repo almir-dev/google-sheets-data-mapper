@@ -1,6 +1,7 @@
 import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
+const primaryKeyMetadataKey = Symbol("column");
 
 export interface ColumnMetaData {
   columnId: string;
@@ -11,6 +12,14 @@ export function Column(columnId: string) {
 
 export function getColumn(target: any, propertyKey: string) {
   return Reflect.getMetadata(columnMetadataKey, target, propertyKey);
+}
+
+export function PrimaryKey() {
+  return Reflect.metadata(primaryKeyMetadataKey, true);
+}
+
+export function getPrimaryKey(target: any, propertyKey: string) {
+  return Reflect.getMetadata(primaryKeyMetadataKey, target, propertyKey);
 }
 
 export class Dto {

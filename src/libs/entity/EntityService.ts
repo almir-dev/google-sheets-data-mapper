@@ -9,7 +9,7 @@ class EntityServiceImpl {
     const results: T[] = [];
 
     for (const element of data) {
-      const targetClassObject = new EntityManager.entityMap[entityName]();
+      const targetClassObject = EntityManager.entityMap[entityName];
       const result = this.toEntityObject<T>(targetClassObject, element);
 
       results.push(result);
@@ -26,14 +26,12 @@ class EntityServiceImpl {
       fieldsMap[columnKey.columnId] = key;
     }
 
-    const obj: T = Object.assign({}, target);
-
     row.forEach((column, index) => {
       // @ts-ignore
-      obj[fieldsMap[this.indexToColumnId(index)]] = row[index];
+      target[fieldsMap[this.indexToColumnId(index)]] = row[index];
     });
 
-    return obj;
+    return target;
   }
 
   private createDataArrays(dataTable: DataTable) {

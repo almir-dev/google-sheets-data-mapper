@@ -8,10 +8,10 @@ import { GoogleQueryResponse, SheetManager } from "../SheetManager";
 
 export function Entity(tableName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
-    EntityManager.register(constructor.name, constructor);
     return class extends constructor {
       constructor(...args: any[]) {
         super(...args);
+        EntityManager.register(constructor.name, this);
 
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
@@ -51,34 +51,35 @@ export function Entity(tableName: string) {
       }
 
       update() {
-        const queryOperationList: QueryOperation[] = [];
-        const values: { [key: string]: any } = {};
-        for (const key of Object.keys(this)) {
-          // @ts-ignore
-          const fieldValue = this[key];
-          // @ts-ignore
-          const columnKey = getColumn(this, key).columnId;
-          queryOperationList.push(whereEq(columnKey, fieldValue));
-          values[key] = fieldValue;
-        }
-
-        const query = CriteriaService.toQueryString(and(...queryOperationList));
-
-        SheetManager.read("StudentTable").then(result => {
-          const ranges: string[] = [];
-          result.rows.forEach(row => {
-            const targetClassObject = new EntityManager.entityMap[
-              constructor.name
-            ]();
-            const entry = EntityService.toEntityObject(
-              targetClassObject,
-              row.values
-            );
-            if (JSON.stringify(entry) === JSON.stringify(values)) {
-              ranges.push(row.range);
-            }
-          });
-        });
+        console.log("WWW update called");
+        // const queryOperationList: QueryOperation[] = [];
+        // const values: { [key: string]: any } = {};
+        // for (const key of Object.keys(this)) {
+        //   // @ts-ignore
+        //   const fieldValue = this[key];
+        //   // @ts-ignore
+        //   const columnKey = getColumn(this, key).columnId;
+        //   queryOperationList.push(whereEq(columnKey, fieldValue));
+        //   values[key] = fieldValue;
+        // }
+        //
+        // const query = CriteriaService.toQueryString(and(...queryOperationList));
+        //
+        // SheetManager.read("StudentTable").then(result => {
+        //   const ranges: string[] = [];
+        //   result.rows.forEach(row => {
+        //     const targetClassObject = new EntityManager.entityMap[
+        //       constructor.name
+        //     ]();
+        //     const entry = EntityService.toEntityObject(
+        //       targetClassObject,
+        //       row.values
+        //     );
+        //     if (JSON.stringify(entry) === JSON.stringify(values)) {
+        //       ranges.push(row.range);
+        //     }
+        //   });
+        // });
       }
 
       private static readonly handleReadResponse = (

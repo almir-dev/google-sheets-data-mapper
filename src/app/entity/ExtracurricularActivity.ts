@@ -1,8 +1,10 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto } from "../../libs/entity/Dto";
+import { Column, Dto, PrimaryKey } from "../../libs/entity/Dto";
+import { EntityManager } from "../../libs/entity/EntityManager";
 
-@Entity("ExtracurricularActivityTable")
+@Entity("ExtracurricularActivityTable", "ExtracurricularActivity")
 export class ExtracurricularActivity extends Dto {
+  @PrimaryKey()
   @Column("A")
   id: string;
   @Column("B")
@@ -10,3 +12,4 @@ export class ExtracurricularActivity extends Dto {
 }
 
 export const ExtracurricularActivityInstance = new ExtracurricularActivity();
+EntityManager.register("ExtracurricularActivity", ExtracurricularActivity);

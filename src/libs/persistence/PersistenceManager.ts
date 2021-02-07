@@ -10,18 +10,11 @@ export enum PersistenceManagerScope {
 }
 
 class PersistenceManagerImpl {
-  private readonly discoveryDocs = [
-    "https://sheets.googleapis.com/$discovery/rest?version=v4"
-  ];
+  private readonly discoveryDocs = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
 
   getActiveSpreadsheetUrl() {
-    const spreadsheetUrl1 =
-      "https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/";
-    return (
-      spreadsheetUrl1 +
-      "gviz/tq?access_token=" +
-      encodeURIComponent(gapi.auth.getToken().access_token)
-    );
+    const spreadsheetUrl1 = "https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/";
+    return spreadsheetUrl1 + "gviz/tq?access_token=" + encodeURIComponent(gapi.auth.getToken().access_token);
   }
 
   init(config: PersistenceManagerConfig): Promise<void> {
@@ -32,10 +25,7 @@ class PersistenceManagerImpl {
     });
   }
 
-  private handleInit(
-    config: PersistenceManagerConfig,
-    onInit: () => void
-  ): void {
+  private handleInit(config: PersistenceManagerConfig, onInit: () => void): void {
     gapi.load("client:auth2", () => this.initClient(config, onInit));
   }
 
@@ -73,12 +63,9 @@ class PersistenceManagerImpl {
         response => {
           return Promise.resolve(response);
         },
-        (reason: string) =>
-          Promise.reject("Failed to sign into google account " + reason)
+        (reason: string) => Promise.reject("Failed to sign into google account " + reason)
       )
-      .catch((reason: string) =>
-        Promise.reject("Failed to log into google account" + reason)
-      );
+      .catch((reason: string) => Promise.reject("Failed to log into google account" + reason));
   };
 
   private isSignedIn() {

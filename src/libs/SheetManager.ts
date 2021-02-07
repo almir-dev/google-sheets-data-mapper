@@ -27,9 +27,7 @@ class SheetManagerImpl {
         range
       })
       .then((response: gapi.client.Response<gapi.client.sheets.ValueRange>) => {
-        const values: any[][] = response.result.values
-          ? removeFirst(response.result.values)
-          : [[]];
+        const values: any[][] = response.result.values ? removeFirst(response.result.values) : [[]];
 
         const rows: RowResult[] = [];
         values.forEach((value, index) => {
@@ -68,9 +66,7 @@ class SheetManagerImpl {
     console.log("WWW done ...");
   }
 
-  create(
-    rowValues: string[]
-  ): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
+  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
     const values = [rowValues];
     const resource = { values: values };
 
@@ -98,7 +94,6 @@ class SheetManagerImpl {
     const dataSourceUrl = request + "&" + selectQuery + "&" + sheetQuery;
 
     const query = new google.visualization.Query(dataSourceUrl);
-    //query.setQuery("select * ");
 
     return new Promise<GoogleQueryResponse>(resolve => {
       query.send(response => {
@@ -107,16 +102,13 @@ class SheetManagerImpl {
     });
   }
 
-  findByCriteria(
-    searchQuery: string,
-    sheet: string
-  ): Promise<GoogleQueryResponse> {
+  findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
     const request = PersistenceManager.getActiveSpreadsheetUrl();
-    const selectQuery = encodeURIComponent("select * where " + searchQuery);
     const sheetQuery = "sheet=" + sheet;
 
-    const dataSourceUrl = request + "&" + selectQuery + "&" + sheetQuery;
+    const dataSourceUrl = request + "&" + sheetQuery;
     const query = new google.visualization.Query(dataSourceUrl);
+    query.setQuery("select * where " + searchQuery);
 
     return new Promise<GoogleQueryResponse>(resolve => {
       query.send(response => {

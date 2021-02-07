@@ -1,17 +1,32 @@
 import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
-const primaryKeyMetadataKey = Symbol("column");
+const joinColumnMetadataKey = Symbol("joinColumn");
+const primaryKeyMetadataKey = Symbol("primaryKey");
 
 export interface ColumnMetaData {
   columnId: string;
 }
+
+export interface JoinColumnMetaData {
+  columnId: string;
+  referenceEntity: string;
+}
+
 export function Column(columnId: string) {
   return Reflect.metadata(columnMetadataKey, { columnId });
 }
 
+export function JoinColumn(columnId: string, referenceEntity: string) {
+  return Reflect.metadata(joinColumnMetadataKey, { columnId, referenceEntity });
+}
+
 export function getColumn(target: any, propertyKey: string) {
   return Reflect.getMetadata(columnMetadataKey, target, propertyKey);
+}
+
+export function getJoinColumn(target: any, propertyKey: string) {
+  return Reflect.getMetadata(joinColumnMetadataKey, target, propertyKey);
 }
 
 export function PrimaryKey() {
@@ -27,7 +42,7 @@ export class Dto {
     return "";
   }
 
-  static findAll<T>(): Promise<T[]> {
+  static async findAll<T>(): Promise<T[]> {
     return Promise.resolve([]);
   }
 

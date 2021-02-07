@@ -2,7 +2,8 @@ export enum QueryOperationType {
   EQ = "=",
   GT = ">",
   LT = "<",
-  LIKE = "LIKE"
+  LIKE = "LIKE",
+  IN = "IN"
 }
 
 export enum QueryLogicType {
@@ -14,7 +15,7 @@ export enum QueryLogicType {
 export interface SingleQueryOperation {
   type: QueryOperationType;
   source: string;
-  target: string;
+  target: string | string[];
 }
 
 export interface PluralQueryOperation {
@@ -36,14 +37,20 @@ export function whereLt(source: string, target: string): SingleQueryOperation {
   return { type: QueryOperationType.LT, source, target };
 }
 
-export function whereLike(
-  source: string,
-  target: string
-): SingleQueryOperation {
+export function whereLike(source: string, target: string): SingleQueryOperation {
   return { type: QueryOperationType.LIKE, source, target };
 }
 
 export function or(...operations: QueryOperation[]): PluralQueryOperation {
+  return {
+    logic: QueryLogicType.OR,
+    operations
+  };
+}
+
+export function whereIn(source: string, target: string[]): PluralQueryOperation {
+  const operations = target.map(element => whereEq(source, element));
+
   return {
     logic: QueryLogicType.OR,
     operations

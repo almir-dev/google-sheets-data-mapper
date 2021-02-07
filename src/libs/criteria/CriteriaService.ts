@@ -1,8 +1,4 @@
-import {
-  QueryOperation,
-  SingleQueryOperation,
-  PluralQueryOperation
-} from "./QueryOperation";
+import { QueryOperation, SingleQueryOperation, PluralQueryOperation } from "./QueryOperation";
 
 class CriteriaServiceImpl {
   toQueryString(criteria: QueryOperation) {

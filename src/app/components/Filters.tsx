@@ -22,9 +22,7 @@ export function FilterContent({ studentNames }: FilterContentProps) {
         getOptionLabel={option => option}
         style={{ width: 300 }}
         id="debug"
-        renderInput={params => (
-          <TextField {...params} label="Student Name" margin="normal" />
-        )}
+        renderInput={params => <TextField {...params} label="Student Name" margin="normal" />}
       />
     </div>
   );

@@ -1,42 +1,81 @@
 import "reflect-metadata";
-import { EntityManager } from "./EntityManager";
-import { EntityService } from "./EntityService";
-import { ColumnMetaData, getColumn } from "./Dto";
+import { ColumnProperties, EntityService } from "./EntityService";
+import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
-import { and, QueryOperation, whereEq } from "../criteria/QueryOperation";
-import { GoogleQueryResponse, SheetManager } from "../SheetManager";
+import { QueryOperation } from "../criteria/QueryOperation";
+import { SheetManager } from "../SheetManager";
+import { EntityMapper } from "./EntityMapper";
 
-export function Entity(tableName: string) {
+export function Entity(tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
+      private readonly primaryKeyColumn: ColumnProperties;
+
       constructor(...args: any[]) {
         super(...args);
-        EntityManager.register(constructor.name, this);
-
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
-          // @ts-ignore
-          this[key] = columnKey.columnId;
+          const joinColumnKey: JoinColumnMetaData = getJoinColumn(this, key);
+          const primaryKey: boolean = getPrimaryKey(this, key);
+
+          if (columnKey && columnKey.columnId) {
+            // @ts-ignore
+            this[key] = columnKey.columnId;
+          } else if (joinColumnKey) {
+            // @ts-ignore
+            this[key] = joinColumnKey.columnId;
+          }
+
+          if (primaryKey) {
+            this.primaryKeyColumn = {
+              columnId: columnKey.columnId,
+              fieldPropertyName: key,
+              referenceEntity: "NOT-DEFINED"
+            };
+          }
         }
       }
 
-      static getName() {
-        return constructor.name;
+      /*** Returns the name of the entity.*/
+      getName() {
+        return entityName;
       }
 
-      static findAll(): Promise<T[]> {
-        return SheetManager.findWithoutCriteria(tableName).then(
-          this.handleReadResponse
-        );
+      /** Returns the associated table name.*/
+      getTableName() {
+        return tableName;
       }
 
+      /** Returns the meta information of the tables primary key.*/
+      getPrimaryKeyColumn() {
+        return this.primaryKeyColumn;
+      }
+
+      /** Finds all entities. */
+      static async findAll(): Promise<T[]> {
+        //const entityList = await EntityService.findEntities(tableName, entityName);
+        //const foo = await EntityService.getReferenceEntityMap(entityName);
+
+        EntityService.findEntities(tableName, entityName);
+
+        return Promise.resolve([]);
+      }
+
+      /**
+       * Finds entities matching the given criteria.
+       * @param criteria criteria used for the search
+       */
       static find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return SheetManager.findByCriteria(query, tableName).then(
-          this.handleReadResponse
-        );
+        return SheetManager.findByCriteria(query, tableName).then(response => {
+          return Promise.resolve(EntityMapper.toEntityObjects(response, entityName));
+        });
       }
 
+      /**
+       * Creates a new entity.
+       * @param entry entry
+       */
       static create(entry: T): Promise<T> {
         const values: string[] = [];
         for (const key of Object.keys(entry)) {
@@ -50,48 +89,10 @@ export function Entity(tableName: string) {
         });
       }
 
+      /** Updates the entity. */
       update() {
         console.log("WWW update called");
-        // const queryOperationList: QueryOperation[] = [];
-        // const values: { [key: string]: any } = {};
-        // for (const key of Object.keys(this)) {
-        //   // @ts-ignore
-        //   const fieldValue = this[key];
-        //   // @ts-ignore
-        //   const columnKey = getColumn(this, key).columnId;
-        //   queryOperationList.push(whereEq(columnKey, fieldValue));
-        //   values[key] = fieldValue;
-        // }
-        //
-        // const query = CriteriaService.toQueryString(and(...queryOperationList));
-        //
-        // SheetManager.read("StudentTable").then(result => {
-        //   const ranges: string[] = [];
-        //   result.rows.forEach(row => {
-        //     const targetClassObject = new EntityManager.entityMap[
-        //       constructor.name
-        //     ]();
-        //     const entry = EntityService.toEntityObject(
-        //       targetClassObject,
-        //       row.values
-        //     );
-        //     if (JSON.stringify(entry) === JSON.stringify(values)) {
-        //       ranges.push(row.range);
-        //     }
-        //   });
-        // });
       }
-
-      private static readonly handleReadResponse = (
-        queryResponse: GoogleQueryResponse
-      ): Promise<T[]> => {
-        const result: T[] = EntityService.toEntityObjects(
-          queryResponse.getDataTable(),
-          constructor.name
-        );
-
-        return Promise.resolve(result);
-      };
     };
   };
 }

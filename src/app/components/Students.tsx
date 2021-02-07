@@ -39,13 +39,7 @@ export function Students({ students }: { students: Student[] }) {
 
   return (
     <div className={style.dataSection}>
-      <MaterialTable
-        columns={TableColumns}
-        data={students}
-        title={"Students"}
-        page={15}
-        options={options}
-      />
+      <MaterialTable columns={TableColumns} data={students} title={"Students"} page={15} options={options} />
     </div>
   );
 }

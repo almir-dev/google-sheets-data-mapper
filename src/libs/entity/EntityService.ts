@@ -1,82 +1,181 @@
 import { EntityManager } from "./EntityManager";
-import { ColumnMetaData, getColumn } from "./Dto";
+import { getJoinColumn } from "./Dto";
+import { SheetManager } from "../SheetManager";
+import { EntityMap, EntityMapper } from "./EntityMapper";
 
-type DataTable = google.visualization.DataTable;
+export interface ColumnProperties {
+  /** Id of the column (Capitalized Letter). */
+  columnId: string;
+  /** Name of the property field. */
+  fieldPropertyName: string;
+  /** Name of the parent entity which is defining the column. */
+  referenceEntity: string;
+}
+
+interface ReferenceEntityJoinProps {
+  referenceEntity: string;
+  propertyName: string;
+}
 
 class EntityServiceImpl {
-  toEntityObjects<T>(dataTable: DataTable, entityName: string): T[] {
-    const data = this.createDataArrays(dataTable);
-    const results: T[] = [];
+  /**
+   * Finds all entities and all their referenced children.
+   * @param tableName table name
+   * @param entityName entity name
+   */
+  async findEntities(tableName: string, entityName: string) {
+    const entityList = await this.findEntitiesWithoutReferences(tableName, entityName);
+    const referenceMap = await this.getReferenceEntityMap(entityName);
 
-    for (const element of data) {
-      const targetClassObject = EntityManager.entityMap[entityName];
-      const result = this.toEntityObject<T>(targetClassObject, element);
+    const joinProperties = this.getJoinFieldsFromClass(entityName);
 
-      results.push(result);
-    }
-
-    return results;
-  }
-
-  toEntityObject<T>(target: any, row: any[]): T {
-    const fieldsMap: { [key: string]: string } = {};
-
-    for (const key in target) {
-      const columnKey: ColumnMetaData = getColumn(target, key);
-      fieldsMap[columnKey.columnId] = key;
-    }
-
-    row.forEach((column, index) => {
-      // @ts-ignore
-      target[fieldsMap[this.indexToColumnId(index)]] = row[index];
+    joinProperties.forEach(property => {
+      entityList.forEach(entity => {
+        this.fillReferencesForTargetObject(entity, referenceMap);
+      });
     });
 
-    return target;
+    console.log("WWW processed data", entityList);
   }
 
-  private createDataArrays(dataTable: DataTable) {
-    const rowLen = dataTable.getNumberOfRows();
-    const colLen = dataTable.getNumberOfColumns();
+  /***
+   * Finds all entities for the given table name and entity name, without touching reference fields.
+   * @param tableName name of the table corresponding to the entity
+   * @param entityName name of the entity
+   * @return promise of list of entities
+   */
+  private findEntitiesWithoutReferences<T>(tableName: string, entityName: string): Promise<T[]> {
+    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+      const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
-    const elements = [];
+      return Promise.resolve(entityObjectList);
+    });
+  }
 
-    for (let i = 0; i < rowLen; ++i) {
-      const element = [];
-      for (let j = 0; j < colLen; ++j) {
-        const rowValue = dataTable.getValue(i, j);
-        element.push(rowValue);
+  /***
+   * Finds all entities for the given table name and entity name, without touching reference fields.
+   * @param tableName name of the table corresponding to the entity
+   * @param entityName name of the entity
+   * @return promise of list of entities
+   */
+  private findEntitiesWithoutReferencesAsMap<T>(tableName: string, entityName: string): Promise<EntityMap<T>> {
+    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+      const entityObjectMap: EntityMap<T> = EntityMapper.toEntityObjectMap(googleQueryResponse, entityName);
+
+      return entityObjectMap;
+    });
+  }
+
+  /**
+   * Creates a map from target class where the key is a joined property name and the value is
+   * map of its id-entity values.
+   * @param targetClassName target class name
+   */
+  private getReferenceEntityMap(targetClassName: string): Promise<{ [key: string]: EntityMap<any> }> {
+    const joinProperties = this.getReferenceEntityJoinProps(targetClassName);
+
+    const referencePromiseList = joinProperties.map(prop =>
+      this.getReferenceEntitiesForProperty(prop.referenceEntity, prop.propertyName)
+    );
+
+    return Promise.all(referencePromiseList).then(result => {
+      const finalMap: { [key: string]: EntityMap<any> } = {};
+
+      result.forEach(e => {
+        const key = e.key + "-" + e.targetClass;
+        finalMap[key] = e.map;
+      });
+
+      return Promise.resolve(finalMap);
+    });
+  }
+
+  /**
+   * Assigns all reference fiends values from the corresponding entry in the referenceEntityMap.
+   * @param targetClassObject target class object
+   * @param referenceEntityMap reference entity map
+   */
+  private fillReferencesForTargetObject(targetClassObject: any, referenceEntityMap: { [key: string]: EntityMap<any> }) {
+    if (!targetClassObject) {
+      return;
+    }
+
+    Object.keys(targetClassObject).forEach(key => {
+      const joinColumn = getJoinColumn(targetClassObject, key);
+      if (joinColumn) {
+        const entityName = targetClassObject.getName();
+        const referenceKey = key + "-" + entityName;
+        const targetReferenceMap = referenceEntityMap[referenceKey];
+        const pk = targetClassObject[key];
+        const targetValue = targetReferenceMap[pk];
+        if (targetValue) {
+          this.fillReferencesForTargetObject(targetValue, referenceEntityMap);
+          targetClassObject[key] = targetValue;
+        }
       }
-      elements.push(element);
-    }
-
-    return elements;
+    });
   }
 
-  private indexToColumnId(index: number): string {
-    switch (index) {
-      case 0:
-        return "A";
-      case 1:
-        return "B";
-      case 2:
-        return "C";
-      case 3:
-        return "D";
-      case 4:
-        return "E";
-      case 5:
-        return "F";
-      case 6:
-        return "G";
-      case 7:
-        return "H";
-      case 8:
-        return "I";
-      case 9:
-        return "J";
-    }
+  /**
+   * Finds all reference entries as a map, by the reference property of the target class object.
+   * @param targetClassName target class name
+   * @param propertyName property name
+   */
+  private getReferenceEntitiesForProperty(targetClassName: string, propertyName: string) {
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const referenceEntityName = EntityService.getReferenceEntityNameFromProperty(targetClassObject, propertyName);
+    const referenceTableName = new EntityManager.entityMap[referenceEntityName]().getTableName();
 
-    return "A";
+    return EntityService.findEntitiesWithoutReferencesAsMap(referenceTableName, referenceEntityName).then(map => {
+      return Promise.resolve({ key: propertyName, targetClass: targetClassName, map });
+    });
+  }
+
+  /**
+   * Returns the name of the reference entity, for the given property.
+   * @param targetClassObject target class object.
+   * @param propertyName property name
+   */
+  private getReferenceEntityNameFromProperty(targetClassObject: any, propertyName: string): string {
+    const column = getJoinColumn(targetClassObject, propertyName);
+    return column.referenceEntity;
+  }
+
+  /**
+   * Finds all property names of a class annotated with @Join.
+   * @param targetClassName name of the target class
+   * @return list of property names
+   */
+  private getJoinFieldsFromClass(targetClassName: string): string[] {
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const joinFieldProperties: string[] = [];
+    Object.keys(targetClassObject).forEach(key => {
+      if (getJoinColumn(targetClassObject, key)) {
+        joinFieldProperties.push(key);
+      }
+    });
+
+    return joinFieldProperties;
+  }
+
+  /**
+   * Recursively iterates over target class and finds all join columns.
+   * @param targetClassName target class name
+   * @return array of ReferenceEntityJoinProps
+   */
+  private getReferenceEntityJoinProps(targetClassName: string): ReferenceEntityJoinProps[] {
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const joinFieldProperties: ReferenceEntityJoinProps[] = [];
+    Object.keys(targetClassObject).forEach(key => {
+      const joinColumn = getJoinColumn(targetClassObject, key);
+      if (joinColumn) {
+        const prop = { referenceEntity: targetClassName, propertyName: key };
+        const nestedProps = this.getReferenceEntityJoinProps(joinColumn.referenceEntity);
+        joinFieldProperties.push(...[prop, ...nestedProps]);
+      }
+    });
+
+    return joinFieldProperties;
   }
 }
 

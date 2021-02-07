@@ -1,7 +1,10 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto, PrimaryKey } from "../../libs/entity/Dto";
+import { Column, Dto, JoinColumn, PrimaryKey } from "../../libs/entity/Dto";
+import { ExtracurricularActivity } from "./ExtracurricularActivity";
+import { EntityManager } from "../../libs/entity/EntityManager";
+import { Major } from "./Major";
 
-@Entity("StudentTable")
+@Entity("StudentTable", "Student")
 export class Student extends Dto {
   @PrimaryKey()
   @Column("A")
@@ -14,10 +17,11 @@ export class Student extends Dto {
   classLevel: string;
   @Column("E")
   homeState: string;
-  @Column("F")
-  major: string;
-  @Column("G")
-  eActivity: string;
+  @JoinColumn("F", "Major")
+  major: Major;
+  @JoinColumn("G", "ExtracurricularActivity")
+  eActivity: ExtracurricularActivity;
 }
 
 export const StudentInstance = new Student();
+EntityManager.register("Student", Student);

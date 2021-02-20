@@ -7,11 +7,12 @@ import {
 } from "./libs/persistence/PersistenceManager";
 import { SheetManager } from "./libs/SheetManager";
 import "bootstrap/dist/css/bootstrap.css";
-import { Student } from "./app/entity/Student";
+import {Student, StudentInstance} from "./app/entity/Student";
 import { ExtracurricularActivity } from "./app/entity/ExtracurricularActivity";
-import { Major } from "./app/entity/Major";
+import {Major, MajorInstance} from "./app/entity/Major";
 import { Professor } from "./app/entity/Professor";
 import { Address } from "./app/entity/Address";
+import {and, or, QueryOperation, whereEq} from "./libs/criteria/QueryOperation";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -37,7 +38,17 @@ function AppContent() {
   const professor = new Professor();
   const address = new Address();
 
-  Student.findAll();
+  // Student.findAll().then(result => {
+  //   console.log('WWW result', result);
+  // });
+
+  const criteria: QueryOperation = or(
+      whereEq(StudentInstance.homeState, 'CA'),
+      whereEq(StudentInstance.homeState, 'NY')
+  );
+  Student.find(criteria).then(result => {
+    console.log('WWW result', result);
+  })
 
   return null;
 }

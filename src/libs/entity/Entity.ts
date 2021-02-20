@@ -1,10 +1,9 @@
 import "reflect-metadata";
-import { ColumnProperties, EntityService } from "./EntityService";
-import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
-import { CriteriaService } from "../criteria/CriteriaService";
-import { QueryOperation } from "../criteria/QueryOperation";
-import { SheetManager } from "../SheetManager";
-import { EntityMapper } from "./EntityMapper";
+import {ColumnProperties, EntityService} from "./EntityService";
+import {ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData} from "./Dto";
+import {CriteriaService} from "../criteria/CriteriaService";
+import {QueryOperation} from "../criteria/QueryOperation";
+import {SheetManager} from "../SheetManager";
 
 export function Entity(tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -53,23 +52,16 @@ export function Entity(tableName: string, entityName: string) {
 
       /** Finds all entities. */
       static async findAll(): Promise<T[]> {
-        //const entityList = await EntityService.findEntities(tableName, entityName);
-        //const foo = await EntityService.getReferenceEntityMap(entityName);
-
-        EntityService.findEntities(tableName, entityName);
-
-        return Promise.resolve([]);
+        return await EntityService.findEntities(tableName, entityName) as unknown as T[];
       }
 
       /**
        * Finds entities matching the given criteria.
        * @param criteria criteria used for the search
        */
-      static find(criteria: QueryOperation): Promise<T[]> {
+      static async find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return SheetManager.findByCriteria(query, tableName).then(response => {
-          return Promise.resolve(EntityMapper.toEntityObjects(response, entityName));
-        });
+        return await EntityService.findEntitiesWithQuery(tableName, entityName, query) as unknown as T[];
       }
 
       /**

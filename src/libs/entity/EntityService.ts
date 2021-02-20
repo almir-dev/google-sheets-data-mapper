@@ -35,7 +35,27 @@ class EntityServiceImpl {
       });
     });
 
-    console.log("WWW processed data", entityList);
+    return Promise.resolve(entityList);
+  }
+
+  /**
+   * Finds all entities and all their referenced children, by given query.
+   * @param tableName table name
+   * @param entityName entity name
+   */
+  async findEntitiesWithQuery(tableName: string, entityName: string, query: string) {
+    const entityList = await this.findEntitiesWithoutReferencesByQuery(tableName, entityName, query);
+    const referenceMap = await this.getReferenceEntityMap(entityName);
+
+    const joinProperties = this.getJoinFieldsFromClass(entityName);
+
+    joinProperties.forEach(property => {
+      entityList.forEach(entity => {
+        this.fillReferencesForTargetObject(entity, referenceMap);
+      });
+    });
+
+    return Promise.resolve(entityList);
   }
 
   /***
@@ -46,6 +66,21 @@ class EntityServiceImpl {
    */
   private findEntitiesWithoutReferences<T>(tableName: string, entityName: string): Promise<T[]> {
     return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+      const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
+
+      return Promise.resolve(entityObjectList);
+    });
+  }
+
+  /***
+   * Finds all entities for the given table name and entity name, without touching reference fields.
+   * @param tableName name of the table corresponding to the entity
+   * @param entityName name of the entity
+   * @param query search query
+   * @return promise of list of entities
+   */
+  private findEntitiesWithoutReferencesByQuery<T>(tableName: string, entityName: string, query: string): Promise<T[]> {
+    return SheetManager.findByCriteria(query, tableName).then(googleQueryResponse => {
       const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
       return Promise.resolve(entityObjectList);

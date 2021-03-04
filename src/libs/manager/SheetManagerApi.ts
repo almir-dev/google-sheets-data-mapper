@@ -11,7 +11,7 @@ export interface SheetResults {
   rows: RowResult[];
 }
 
-export interface StandaloneSheetManagerApi {
+export interface SheetManagerApi {
   read(range: string): Promise<SheetResults>;
 
   update(values: string[], rangeList: string[]): void;

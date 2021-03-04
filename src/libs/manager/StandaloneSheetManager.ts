@@ -4,11 +4,11 @@ import {
   GoogleQueryResponse,
   GoogleResponse,
   RowResult,
-  StandaloneSheetManagerApi,
+  SheetManagerApi,
   SheetResults
 } from "./SheetManagerApi";
 
-class SheetManagerImpl implements StandaloneSheetManagerApi {
+class SheetManagerImpl implements SheetManagerApi {
   private activeSpreadSheetId = "";
 
   setActiveSheet(activeSpreadSheetId: string) {
@@ -117,4 +117,4 @@ function removeFirst(input: any[][]) {
   return input.filter((e, index) => index !== 0);
 }
 
-export const SheetManager = new SheetManagerImpl();
+export const StandaloneSheetManager = new SheetManagerImpl();

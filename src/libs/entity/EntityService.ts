@@ -1,7 +1,7 @@
 import { EntityManager } from "./EntityManager";
 import { getJoinColumn } from "./Dto";
-import { SheetManager } from "../manager/SheetManager";
 import { EntityMap, EntityMapper } from "./EntityMapper";
+import { StandaloneSheetManager } from "../manager/StandaloneSheetManager";
 
 export interface ColumnProperties {
   /** Id of the column (Capitalized Letter). */
@@ -65,7 +65,7 @@ class EntityServiceImpl {
    * @return promise of list of entities
    */
   private findEntitiesWithoutReferences<T>(tableName: string, entityName: string): Promise<T[]> {
-    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+    return StandaloneSheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
       const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
       return Promise.resolve(entityObjectList);
@@ -80,7 +80,7 @@ class EntityServiceImpl {
    * @return promise of list of entities
    */
   private findEntitiesWithoutReferencesByQuery<T>(tableName: string, entityName: string, query: string): Promise<T[]> {
-    return SheetManager.findByCriteria(query, tableName).then(googleQueryResponse => {
+    return StandaloneSheetManager.findByCriteria(query, tableName).then(googleQueryResponse => {
       const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
       return Promise.resolve(entityObjectList);
@@ -94,7 +94,7 @@ class EntityServiceImpl {
    * @return promise of list of entities
    */
   private findEntitiesWithoutReferencesAsMap<T>(tableName: string, entityName: string): Promise<EntityMap<T>> {
-    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+    return StandaloneSheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
       const entityObjectMap: EntityMap<T> = EntityMapper.toEntityObjectMap(googleQueryResponse, entityName);
 
       return entityObjectMap;

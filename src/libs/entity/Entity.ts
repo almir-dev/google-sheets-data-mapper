@@ -3,7 +3,7 @@ import { ColumnProperties, EntityService } from "./EntityService";
 import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
-import { SheetManager } from "../manager/SheetManager";
+import { StandaloneSheetManager } from "../manager/StandaloneSheetManager";
 
 export function Entity(tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -76,7 +76,7 @@ export function Entity(tableName: string, entityName: string) {
           values.push(fieldValue);
         }
 
-        return SheetManager.create(values).then(() => {
+        return StandaloneSheetManager.create(values).then(() => {
           return Promise.resolve(entry);
         });
       }

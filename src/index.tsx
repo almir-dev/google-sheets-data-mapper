@@ -6,12 +6,12 @@ import {
   PersistenceManagerConfig,
   PersistenceManagerScope
 } from "./libs/persistence/PersistenceManager";
-import { SheetManager } from "./libs/manager/SheetManager";
 import "bootstrap/dist/css/bootstrap.css";
 import { ExtracurricularActivity } from "./app/entity/ExtracurricularActivity";
 import { Major } from "./app/entity/Major";
 import { Professor } from "./app/entity/Professor";
 import { Address } from "./app/entity/Address";
+import { StandaloneSheetManager } from "./libs/manager/StandaloneSheetManager";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -28,7 +28,7 @@ function AppContent() {
   const [ready, setReady] = React.useState<boolean>(false);
   React.useEffect(() => {
     PersistenceManager.init(config).then(() => setReady(true));
-    SheetManager.setActiveSheet(defaultSheetId);
+    StandaloneSheetManager.setActiveSheet(defaultSheetId);
   }, []);
 
   if (!ready) {

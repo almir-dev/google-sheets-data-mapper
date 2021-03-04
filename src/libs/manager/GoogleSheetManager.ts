@@ -1,10 +1,10 @@
 import {
   GoogleAppendValuesResponse,
   GoogleQueryResponse,
-  GoogleResponse,
-  StandaloneSheetManagerApi,
-  SheetResults
-} from "./SheetManagerApi";
+  GoogleResponse, SheetResults,
+  StandaloneSheetManagerApi
+} from "./StandaloneSheetManagerApi";
+
 
 class GoogleSheetManagerImpl implements StandaloneSheetManagerApi {
   create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {

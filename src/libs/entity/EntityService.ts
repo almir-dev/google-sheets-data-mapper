@@ -1,6 +1,6 @@
 import { EntityManager } from "./EntityManager";
 import { getJoinColumn } from "./Dto";
-import { SheetManager } from "../SheetManager";
+import { SheetManager } from "../manager/SheetManager";
 import { EntityMap, EntityMapper } from "./EntityMapper";
 
 export interface ColumnProperties {

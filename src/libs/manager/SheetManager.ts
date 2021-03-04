@@ -1,19 +1,14 @@
-import { PersistenceManager } from "./persistence/PersistenceManager";
+import { PersistenceManager } from "../persistence/PersistenceManager";
+import {
+  GoogleAppendValuesResponse,
+  GoogleQueryResponse,
+  GoogleResponse,
+  RowResult,
+  SheetManagerApi,
+  SheetResults
+} from "./SheetManagerApi";
 
-export type GoogleQueryResponse = google.visualization.QueryResponse;
-type GoogleResponse<T> = gapi.client.Response<T>;
-type GoogleAppendValuesResponse = gapi.client.sheets.AppendValuesResponse;
-
-interface SheetResults {
-  rows: RowResult[];
-}
-
-interface RowResult {
-  range: string;
-  values: any[];
-}
-
-class SheetManagerImpl {
+class SheetManagerImpl implements SheetManagerApi {
   private activeSpreadSheetId = "";
 
   setActiveSheet(activeSpreadSheetId: string) {

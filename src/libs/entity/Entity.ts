@@ -3,7 +3,7 @@ import { ColumnProperties, EntityService } from "./EntityService";
 import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
-import { SheetManager } from "../SheetManager";
+import { SheetManager } from "../manager/SheetManager";
 
 export function Entity(tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {

@@ -1,6 +1,6 @@
 import { EntityManager } from "./EntityManager";
 import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
-import { GoogleQueryResponse } from "../SheetManager";
+import { GoogleQueryResponse } from "../manager/SheetManagerApi";
 
 type DataTable = google.visualization.DataTable;
 

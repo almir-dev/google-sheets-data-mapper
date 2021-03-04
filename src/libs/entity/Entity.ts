@@ -1,9 +1,9 @@
 import "reflect-metadata";
-import {ColumnProperties, EntityService} from "./EntityService";
-import {ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData} from "./Dto";
-import {CriteriaService} from "../criteria/CriteriaService";
-import {QueryOperation} from "../criteria/QueryOperation";
-import {SheetManager} from "../SheetManager";
+import { ColumnProperties, EntityService } from "./EntityService";
+import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
+import { CriteriaService } from "../criteria/CriteriaService";
+import { QueryOperation } from "../criteria/QueryOperation";
+import { SheetManager } from "../SheetManager";
 
 export function Entity(tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -52,7 +52,7 @@ export function Entity(tableName: string, entityName: string) {
 
       /** Finds all entities. */
       static async findAll(): Promise<T[]> {
-        return await EntityService.findEntities(tableName, entityName) as unknown as T[];
+        return ((await EntityService.findEntities(tableName, entityName)) as unknown) as T[];
       }
 
       /**
@@ -61,7 +61,7 @@ export function Entity(tableName: string, entityName: string) {
        */
       static async find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return await EntityService.findEntitiesWithQuery(tableName, entityName, query) as unknown as T[];
+        return ((await EntityService.findEntitiesWithQuery(tableName, entityName, query)) as unknown) as T[];
       }
 
       /**

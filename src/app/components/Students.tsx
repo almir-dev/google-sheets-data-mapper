@@ -1,6 +1,5 @@
-import MaterialTable, { Column, Options } from "material-table";
+import { Column, Options } from "material-table";
 import { Student } from "../entity/Student";
-import style from "./StudentView.module.scss";
 import React from "react";
 
 const TableColumns: Column<Student>[] = [
@@ -38,8 +37,10 @@ export function Students({ students }: { students: Student[] }) {
   };
 
   return (
-    <div className={style.dataSection}>
-      <MaterialTable columns={TableColumns} data={students} title={"Students"} page={15} options={options} />
+    <div>
+      Almir
+      {/*{students[0].name}*/}
+      {/*<MaterialTable columns={TableColumns} data={students} title={"Students"} page={15} options={options} />*/}
     </div>
   );
 }

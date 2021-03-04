@@ -8,7 +8,6 @@ import {
 } from "./libs/persistence/PersistenceManager";
 import { SheetManager } from "./libs/manager/SheetManager";
 import "bootstrap/dist/css/bootstrap.css";
-import { Student } from "./app/entity/Student";
 import { ExtracurricularActivity } from "./app/entity/ExtracurricularActivity";
 import { Major } from "./app/entity/Major";
 import { Professor } from "./app/entity/Professor";
@@ -40,12 +39,8 @@ function AppContent() {
   const major = new Major();
   const professor = new Professor();
   const address = new Address();
-  //
-  Student.findAll().then(result => {
-    console.log("WWW result", result);
-  });
 
-  return <div>test2</div>;
+  return <div>test5</div>;
 }
 
 ReactDOM.render(<AppContent />, document.getElementById("root"));

@@ -18,11 +18,19 @@ class PersistenceManagerImpl {
   }
 
   init(config: PersistenceManagerConfig): Promise<void> {
+    if (this.isProdEnv()) {
+      return Promise.resolve();
+    }
+
     return new Promise<void>(resolve => {
       this.handleInit(config, () => {
         return resolve();
       });
     });
+  }
+
+  public isProdEnv(): boolean {
+    return process.env.NODE_ENV === "production";
   }
 
   private handleInit(config: PersistenceManagerConfig, onInit: () => void): void {

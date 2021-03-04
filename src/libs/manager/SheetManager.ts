@@ -4,11 +4,11 @@ import {
   GoogleQueryResponse,
   GoogleResponse,
   RowResult,
-  SheetManagerApi,
+  StandaloneSheetManagerApi,
   SheetResults
 } from "./SheetManagerApi";
 
-class SheetManagerImpl implements SheetManagerApi {
+class SheetManagerImpl implements StandaloneSheetManagerApi {
   private activeSpreadSheetId = "";
 
   setActiveSheet(activeSpreadSheetId: string) {

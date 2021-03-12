@@ -26,6 +26,7 @@
     "src",
     "node_modules/gas-types-detailed/google-apps-script.spreadsheet.d.ts",
     "node_modules/gas-types-detailed/google-apps-script.script.d.ts",
-    "node_modules/gas-types-detailed/google-apps-script.base.d.ts"
+    "node_modules/gas-types-detailed/google-apps-script.charts.d.ts",
+    "node_modules/gas-types-detailed/google-apps-script.url-fetch.d.ts.d.ts"
   ]
 }

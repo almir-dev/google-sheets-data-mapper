@@ -6,9 +6,9 @@ import { EntityManager } from "../../libs/entity/EntityManager";
 export class Address extends Dto {
   @PrimaryKey()
   @Column("A")
-  id: string;
+  id = "";
   @Column("B")
-  address: string;
+  address = "";
 }
 
 export const AddressInstance = new Address();

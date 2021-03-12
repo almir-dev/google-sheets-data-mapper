@@ -6,9 +6,9 @@ import { EntityManager } from "../../libs/entity/EntityManager";
 export class ExtracurricularActivity extends Dto {
   @PrimaryKey()
   @Column("A")
-  id: string;
+  id = "";
   @Column("B")
-  name: string;
+  name = "";
 }
 
 export const ExtracurricularActivityInstance = new ExtracurricularActivity();

@@ -12,6 +12,7 @@ import { Major } from "./app/entity/Major";
 import { Professor } from "./app/entity/Professor";
 import { Address } from "./app/entity/Address";
 import { StandaloneSheetManager } from "./libs/manager/StandaloneSheetManager";
+import { Student } from "./app/entity/Student";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -40,7 +41,11 @@ function AppContent() {
   const professor = new Professor();
   const address = new Address();
 
-  return <div>test5</div>;
+  Student.findAll()
+    .then(result => console.log("WWW result", result))
+    .catch(error => console.log("WWW error", error));
+
+  return <div>test6</div>;
 }
 
 ReactDOM.render(<AppContent />, document.getElementById("root"));

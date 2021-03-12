@@ -1,3 +1,4 @@
+import server from "../../server/server";
 import {
   GoogleAppendValuesResponse,
   GoogleQueryResponse,
@@ -5,6 +6,8 @@ import {
   SheetManagerApi,
   SheetResults
 } from "./SheetManagerApi";
+
+const { serverFunctions } = server;
 
 class GoogleSheetManagerImpl implements SheetManagerApi {
   create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
@@ -16,7 +19,25 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
   }
 
   findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse> {
-    return Promise.resolve((undefined as unknown) as GoogleQueryResponse);
+    return serverFunctions
+      .findWithoutCriteria()
+      .then((response: any) => {
+        const googleResponse = {
+          getDataTable: () => {
+            return {
+              getNumberOfRows: () => response.rows.length,
+              getNumberOfColumns: () => response.cols.length,
+              getValue: (x: number, y: number) => {
+                const bar = response.rows[x].c[y].v;
+                return response.rows[x].c[y].v;
+              }
+            };
+          }
+        };
+
+        return Promise.resolve(googleResponse);
+      })
+      .catch((error: any) => console.warn("Failed to fetch sheet data without criteria", error));
   }
 
   read(range: string): Promise<SheetResults> {

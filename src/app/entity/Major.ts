@@ -7,11 +7,11 @@ import { Professor } from "./Professor";
 export class Major extends Dto {
   @PrimaryKey()
   @Column("A")
-  id: string;
+  id = "";
   @Column("B")
-  name: string;
+  name = "";
   @JoinColumn("C", "Professor")
-  professor: Professor;
+  professor = {};
 }
 
 export const MajorInstance = new Major();

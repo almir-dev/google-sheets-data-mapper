@@ -1,0 +1,10 @@
+// request with localy generated token
+GET https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/gviz/tq?
+ access_token=ya29.a0AfH6SMCM0Xb4AoJaQvCHniGfUfWwycOL5noZypdWzaHgo2GGyPTGcLw2gWTmmt3vtYHfplSw-ar_xO22qeR7lxrRQxj6U6rrFLrFMHXXZBjxP4Qcul2rqXtBqQGk81o5d6BdRvdcnII_01j-UJomWy57_lGIF-I
+ &select%20*%20&sheet=StudentTable&tqx=reqId%3A0
+
+###
+// request with google generated token
+GET https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/gviz/tq?
+ access_token=ya29.a0AfH6SMAf98-PvMzHbZ7rSNBR-BPyIbJD2JW_qsQhXGsAv-qOJs9p6E2JXY7Aa_wQYSRDth-p-nJxHHlBzXJtJH62jhuib1_rLtBqNkDsFFwcXmggVBYuNlQPnQ_7OvbwZ2N2cSUOdbRnKf2uN4kwQfbDBRg3vw
+ &select%20*%20&sheet=StudentTable&tqx=reqId%3A0

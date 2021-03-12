@@ -8,19 +8,19 @@ import { Major } from "./Major";
 export class Student extends Dto {
   @PrimaryKey()
   @Column("A")
-  id: string;
+  id = "";
   @Column("B")
-  name: string;
+  name = "";
   @Column("C")
-  gender: string;
+  gender = "";
   @Column("D")
-  classLevel: string;
+  classLevel = "";
   @Column("E")
-  homeState: string;
+  homeState = "";
   @JoinColumn("F", "Major")
-  major: Major;
+  major = {};
   @JoinColumn("G", "ExtracurricularActivity")
-  eActivity: ExtracurricularActivity;
+  eActivity = {};
 }
 
 export const StudentInstance = new Student();

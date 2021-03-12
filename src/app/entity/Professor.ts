@@ -15,4 +15,3 @@ export class Professor extends Dto {
 }
 
 export const ProfessorInstance = new Professor();
-EntityManager.register("Professor", Professor);

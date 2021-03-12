@@ -15,4 +15,3 @@ export class Major extends Dto {
 }
 
 export const MajorInstance = new Major();
-EntityManager.register("Major", Major);

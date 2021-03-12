@@ -24,4 +24,3 @@ export class Student extends Dto {
 }
 
 export const StudentInstance = new Student();
-EntityManager.register("Student", Student);

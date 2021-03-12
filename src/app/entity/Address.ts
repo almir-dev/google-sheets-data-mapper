@@ -12,4 +12,3 @@ export class Address extends Dto {
 }
 
 export const AddressInstance = new Address();
-EntityManager.register("Address", Address);

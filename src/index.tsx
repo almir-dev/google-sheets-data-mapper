@@ -13,6 +13,7 @@ import { Professor } from "./app/entity/Professor";
 import { Address } from "./app/entity/Address";
 import { StandaloneSheetManager } from "./libs/manager/StandaloneSheetManager";
 import { Student } from "./app/entity/Student";
+import { EntityManager } from "./libs/entity/EntityManager";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -30,22 +31,26 @@ function AppContent() {
   React.useEffect(() => {
     PersistenceManager.init(config).then(() => setReady(true));
     StandaloneSheetManager.setActiveSheet(defaultSheetId);
+    initEntityClasses();
   }, []);
 
   if (!ready) {
     return <div>Almir</div>;
   }
 
-  const ea = new ExtracurricularActivity();
-  const major = new Major();
-  const professor = new Professor();
-  const address = new Address();
-
   Student.findAll()
     .then(result => console.log("WWW result", result))
     .catch(error => console.log("WWW error", error));
 
   return <div>test6</div>;
+}
+
+function initEntityClasses() {
+  EntityManager.register("Address", new Address());
+  EntityManager.register("ExtracurricularActivity", new ExtracurricularActivity());
+  EntityManager.register("Major", new Major());
+  EntityManager.register("Professor", new Professor());
+  EntityManager.register("Student", new Student());
 }
 
 ReactDOM.render(<AppContent />, document.getElementById("root"));

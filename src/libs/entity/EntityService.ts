@@ -157,9 +157,9 @@ class EntityServiceImpl {
    * @param propertyName property name
    */
   private getReferenceEntitiesForProperty(targetClassName: string, propertyName: string) {
-    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const targetClassObject = EntityManager.entityMap[targetClassName];
     const referenceEntityName = EntityService.getReferenceEntityNameFromProperty(targetClassObject, propertyName);
-    const referenceTableName = new EntityManager.entityMap[referenceEntityName]().getTableName();
+    const referenceTableName = EntityManager.entityMap[referenceEntityName].getTableName();
 
     return EntityService.findEntitiesWithoutReferencesAsMap(referenceTableName, referenceEntityName).then(map => {
       return Promise.resolve({ key: propertyName, targetClass: targetClassName, map });
@@ -182,7 +182,7 @@ class EntityServiceImpl {
    * @return list of property names
    */
   private getJoinFieldsFromClass(targetClassName: string): string[] {
-    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const targetClassObject = EntityManager.entityMap[targetClassName];
     const joinFieldProperties: string[] = [];
     Object.keys(targetClassObject).forEach(key => {
       if (getJoinColumn(targetClassObject, key)) {
@@ -199,7 +199,7 @@ class EntityServiceImpl {
    * @return array of ReferenceEntityJoinProps
    */
   private getReferenceEntityJoinProps(targetClassName: string): ReferenceEntityJoinProps[] {
-    const targetClassObject = new EntityManager.entityMap[targetClassName]();
+    const targetClassObject = EntityManager.entityMap[targetClassName];
     const joinFieldProperties: ReferenceEntityJoinProps[] = [];
     Object.keys(targetClassObject).forEach(key => {
       const joinColumn = getJoinColumn(targetClassObject, key);

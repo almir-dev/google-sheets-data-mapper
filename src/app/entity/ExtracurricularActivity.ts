@@ -12,4 +12,3 @@ export class ExtracurricularActivity extends Dto {
 }
 
 export const ExtracurricularActivityInstance = new ExtracurricularActivity();
-EntityManager.register("ExtracurricularActivity", ExtracurricularActivity);

@@ -12,13 +12,11 @@ export interface SheetResults {
 }
 
 export interface SheetManagerApi {
-  read(range: string): Promise<SheetResults>;
-
-  update(values: string[], rangeList: string[]): void;
-
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>>;
-
   findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse>;
 
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse>;
+
+  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>>;
+
+  delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: number, pkValue: string): Promise<void>;
 }

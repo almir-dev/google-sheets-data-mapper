@@ -14,6 +14,7 @@ import { Address } from "./app/entity/Address";
 import { StandaloneSheetManager } from "./libs/manager/StandaloneSheetManager";
 import { Student } from "./app/entity/Student";
 import { EntityManager } from "./libs/entity/EntityManager";
+import { SheetManager } from "./libs/manager/SheetManager";
 
 const config: PersistenceManagerConfig = {
   apiKey: "secret",
@@ -38,7 +39,9 @@ function AppContent() {
     return <div>Almir</div>;
   }
 
-  Student.findAll()
+  SheetManager.delete("StudentsTable", "backup", 0, "id10");
+
+  ExtracurricularActivity.findAll()
     .then(result => console.log("WWW result", result))
     .catch(error => console.log("WWW error", error));
 

@@ -1,7 +1,12 @@
+/**
+ * Method needed by google, the generated html out of it will be used to deploy as a web app.
+ * @return {GoogleAppsScript.HTML.HtmlOutput}
+ */
 function doGet() {
     return HtmlService.createTemplateFromFile("diploma.html").evaluate();
 }
 
+/** Retrieves the OauthToken. */
 function getToken() {
     return ScriptApp.getOAuthToken();
 }
@@ -23,7 +28,55 @@ function convertQueryResponseToDataArray(responseText) {
     return JSON.parse(jsonText).table;
 }
 
+function lockSheet(spreadSheetId, sheetName) {
+    const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    const editors = sheet.protect().getEditors();
+    const currentEditor = Session.getActiveUser().getEmail();
+
+    editors.forEach(e => {
+        if(e.getEmail() !== currentEditor) {
+            sheet.protect().removeEditor(e.getEmail());
+        }
+    });
+}
+
+function unlockSheet(spreadSheetId, sheetName) {
+    const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    sheet.protect().remove()
+}
+
+
+function findRowNumberByLookupValue(spreadSheetId, sheetName, columnNumber, searchString) {
+    const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    const values = sheet.getDataRange().getValues();
+
+    for(let i=0; i < values.length; ++i) {
+        if(values[i][columnNumber] === searchString) {
+            return i+1;
+        }
+    }
+}
+
+function deleteSheetRow(spreadSheetName, sheetName, primaryColumnNumber, searchString) {
+    const spreadSheetId = findSheetIdByName(spreadSheetName);
+    const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+
+    lockSheet(spreadSheetId, sheetName);
+
+    const rowToDelete = findRowNumberByLookupValue(spreadSheetId, sheetName, primaryColumnNumber, searchString)
+    sheet.deleteRow(rowToDelete);
+
+    unlockSheet(spreadSheetId, sheetName);
+}
+
+
+function findSheetIdByName(spreadsheetName) {
+    return DriveApp.getFilesByName(spreadsheetName).next().getId();
+}
 
 // Expose public functions by attaching to `global`
-global.doGet = doGet;
+global.deleteSheetRow = deleteSheetRow;
+global.lockSheet = lockSheet;
+global.unlockSheet = unlockSheet;
 global.findWithoutCriteria = findWithoutCriteria;
+global.doGet = doGet;

@@ -15,10 +15,6 @@ class SheetManagerImpl implements SheetManagerApi {
     this.activeSheetManager = this.isProdEnv() ? GoogleSheetManager : StandaloneSheetManager;
   }
 
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
-    return this.activeSheetManager.create(rowValues);
-  }
-
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
     return this.activeSheetManager.findByCriteria(searchQuery, sheet);
   }
@@ -27,11 +23,13 @@ class SheetManagerImpl implements SheetManagerApi {
     return this.activeSheetManager.findWithoutCriteria(sheet);
   }
 
-  read(range: string): Promise<SheetResults> {
-    return this.activeSheetManager.read(range);
+  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
+    return this.activeSheetManager.create(rowValues);
   }
 
-  update(values: string[], rangeList: string[]): void {}
+  delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: number, pkValue: string): Promise<void> {
+    return this.activeSheetManager.delete(spreadSheetId, sheetName, primaryColumnNumber, pkValue);
+  }
 
   private isProdEnv(): boolean {
     return process.env.NODE_ENV === "production";

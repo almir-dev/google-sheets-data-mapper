@@ -1,19 +1,9 @@
 import server from "../../server/server";
-import {
-  GoogleAppendValuesResponse,
-  GoogleQueryResponse,
-  GoogleResponse,
-  SheetManagerApi,
-  SheetResults
-} from "./SheetManagerApi";
+import { GoogleAppendValuesResponse, GoogleQueryResponse, GoogleResponse, SheetManagerApi } from "./SheetManagerApi";
 
 const { serverFunctions } = server;
 
 class GoogleSheetManagerImpl implements SheetManagerApi {
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
-    return Promise.resolve((undefined as unknown) as GoogleResponse<GoogleAppendValuesResponse>);
-  }
-
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
     return Promise.resolve((undefined as unknown) as GoogleQueryResponse);
   }
@@ -40,11 +30,18 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
       .catch((error: any) => console.warn("Failed to fetch sheet data without criteria", error));
   }
 
-  read(range: string): Promise<SheetResults> {
-    return Promise.resolve((undefined as unknown) as SheetResults);
+  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
+    return Promise.resolve((undefined as unknown) as GoogleResponse<GoogleAppendValuesResponse>);
   }
 
-  update(values: string[], rangeList: string[]): void {}
+  delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: number, pkValue: string): Promise<void> {
+    return serverFunctions
+      .deleteSheetRow(spreadSheetId, sheetName, primaryColumnNumber, pkValue)
+      .then(() => {
+        return Promise.resolve();
+      })
+      .catch((error: any) => console.warn("Failed to fetch sheet data without criteria", error));
+  }
 }
 
 export const GoogleSheetManager = new GoogleSheetManagerImpl();

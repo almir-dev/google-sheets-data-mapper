@@ -5,7 +5,7 @@ import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
 
-export function Entity(tableName: string, entityName: string) {
+export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       private readonly primaryKeyColumn: ColumnProperties;
@@ -45,6 +45,11 @@ export function Entity(tableName: string, entityName: string) {
         return tableName;
       }
 
+      /** Return the associated spreadsheet name. */
+      getSpreadsheetName() {
+        return spreadSheetName;
+      }
+
       /** Returns the meta information of the tables primary key.*/
       getPrimaryKeyColumn() {
         return this.primaryKeyColumn;
@@ -79,6 +84,18 @@ export function Entity(tableName: string, entityName: string) {
         return SheetManager.create(values).then(() => {
           return Promise.resolve(entry);
         });
+      }
+
+      /**
+       * Delete an entry.
+       * @param entry
+       */
+      static delete(entry: T): Promise<void> {
+        // @ts-ignore
+        const pkColumnName = entry.getPrimaryKeyColumn().fieldPropertyName;
+        // @ts-ignore
+        const pkValue = entry[pkColumnName];
+        return SheetManager.delete(spreadSheetName, tableName, pkColumnName, pkValue);
       }
 
       /** Updates the entity. */

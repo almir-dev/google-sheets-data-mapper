@@ -57,13 +57,14 @@ function findRowNumberByLookupValue(spreadSheetId, sheetName, columnNumber, sear
     }
 }
 
-function deleteSheetRow(spreadSheetName, sheetName, primaryColumnNumber, searchString) {
+function deleteSheetRow(spreadSheetName, sheetName, pkColumnName, pkValue) {
     const spreadSheetId = findSheetIdByName(spreadSheetName);
     const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
 
     lockSheet(spreadSheetId, sheetName);
 
-    const rowToDelete = findRowNumberByLookupValue(spreadSheetId, sheetName, primaryColumnNumber, searchString)
+    const columnNumber = getColByName(spreadSheetId, sheetName, pkColumnName);
+    const rowToDelete = findRowNumberByLookupValue(spreadSheetId, sheetName, columnNumber, pkValue);
     sheet.deleteRow(rowToDelete);
 
     unlockSheet(spreadSheetId, sheetName);
@@ -74,7 +75,19 @@ function findSheetIdByName(spreadsheetName) {
     return DriveApp.getFilesByName(spreadsheetName).next().getId();
 }
 
+function getColByName(spreadSheetId, sheetName, columnName) {
+
+    // get column headers as an array to search through
+    const headers = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName).getDataRange().getValues().shift();
+
+    // search array looking for specific text to return its position
+    const colindex = headers.indexOf(columnName);
+    return colindex+1;
+
+}
+
 // Expose public functions by attaching to `global`
+global.getColByName = getColByName;
 global.deleteSheetRow = deleteSheetRow;
 global.lockSheet = lockSheet;
 global.unlockSheet = unlockSheet;

@@ -54,5 +54,9 @@ export class Dto {
     return Promise.resolve(({} as unknown) as T);
   }
 
+  static delete<T>(entry: T): Promise<void> {
+    return Promise.resolve();
+  }
+
   update() {}
 }

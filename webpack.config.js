@@ -43,7 +43,7 @@ const devDialogEntry = './dev/index.js';
 // define client entry points and output names
 const clientEntrypoints = [
   {
-    name: 'Foo page',
+    name: 'Diploma web app',
     entry: './src/index.tsx',
     filename: 'diploma',
     template: './public/index.html',

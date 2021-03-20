@@ -1,34 +1,39 @@
-import {
-  GoogleAppendValuesResponse,
-  GoogleQueryResponse,
-  GoogleResponse,
-  SheetManagerApi,
-  SheetResults
-} from "./SheetManagerApi";
+import { GoogleAppendValuesResponse, GoogleQueryResponse, GoogleResponse, SheetManagerApi } from "./SheetManagerApi";
 import { GoogleSheetManager } from "./GoogleSheetManager";
-import { StandaloneSheetManager } from "./StandaloneSheetManager";
 
 class SheetManagerImpl implements SheetManagerApi {
-  private readonly activeSheetManager: SheetManagerApi;
+  private readonly activeSheetManager?: SheetManagerApi;
 
   constructor() {
-    this.activeSheetManager = this.isProdEnv() ? GoogleSheetManager : StandaloneSheetManager;
+    this.activeSheetManager = this.isProdEnv() ? GoogleSheetManager : undefined;
   }
 
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
+    if (!this.activeSheetManager) {
+      throw new Error("Cant use sheet manager locally ");
+    }
     return this.activeSheetManager.findByCriteria(searchQuery, sheet);
   }
 
   findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse> {
+    if (!this.activeSheetManager) {
+      throw new Error("Cant use sheet manager locally ");
+    }
     return this.activeSheetManager.findWithoutCriteria(sheet);
   }
 
   create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
+    if (!this.activeSheetManager) {
+      throw new Error("Cant use sheet manager locally ");
+    }
     return this.activeSheetManager.create(rowValues);
   }
 
-  delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: number, pkValue: string): Promise<void> {
-    return this.activeSheetManager.delete(spreadSheetId, sheetName, primaryColumnNumber, pkValue);
+  delete(spreadSheetId: string, sheetName: string, columnName: string, pkValue: string): Promise<void> {
+    if (!this.activeSheetManager) {
+      throw new Error("Cant use sheet manager locally ");
+    }
+    return this.activeSheetManager.delete(spreadSheetId, sheetName, columnName, pkValue);
   }
 
   private isProdEnv(): boolean {

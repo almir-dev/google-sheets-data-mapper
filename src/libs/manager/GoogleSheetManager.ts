@@ -18,7 +18,6 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
               getNumberOfRows: () => response.rows.length,
               getNumberOfColumns: () => response.cols.length,
               getValue: (x: number, y: number) => {
-                const bar = response.rows[x].c[y].v;
                 return response.rows[x].c[y].v;
               }
             };
@@ -34,9 +33,9 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
     return Promise.resolve((undefined as unknown) as GoogleResponse<GoogleAppendValuesResponse>);
   }
 
-  delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: number, pkValue: string): Promise<void> {
+  delete(spreadSheetId: string, sheetName: string, columnName: string, pkValue: string): Promise<void> {
     return serverFunctions
-      .deleteSheetRow(spreadSheetId, sheetName, primaryColumnNumber, pkValue)
+      .deleteSheetRow(spreadSheetId, sheetName, columnName, pkValue)
       .then(() => {
         return Promise.resolve();
       })

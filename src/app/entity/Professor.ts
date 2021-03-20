@@ -1,9 +1,8 @@
 import { Entity } from "../../libs/entity/Entity";
 import { Column, Dto, JoinColumn, PrimaryKey } from "../../libs/entity/Dto";
-import { EntityManager } from "../../libs/entity/EntityManager";
 import { Address } from "./Address";
 
-@Entity("ProfessorTable", "Professor")
+@Entity("StudentsSpreadsheet", "ProfessorTable", "Professor")
 export class Professor extends Dto {
   @PrimaryKey()
   @Column("A")

@@ -7,7 +7,13 @@ export interface SheetManagerApi {
 
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse>;
 
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>>;
+  create(
+    spreadSheetId: string,
+    sheetName: string,
+    values: string[],
+    pkColumnName: string,
+    pkValue: string
+  ): Promise<void>;
 
   delete(spreadSheetId: string, sheetName: string, primaryColumnNumber: string, pkValue: string): Promise<void>;
 }

@@ -45,7 +45,6 @@ function unlockSheet(spreadSheetId, sheetName) {
     sheet.protect().remove()
 }
 
-
 function findRowNumberByLookupValue(spreadSheetId, sheetName, columnNumber, searchString) {
     const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
     const values = sheet.getDataRange().getValues();
@@ -70,7 +69,6 @@ function deleteSheetRow(spreadSheetName, sheetName, pkColumnName, pkValue) {
     unlockSheet(spreadSheetId, sheetName);
 }
 
-
 function findSheetIdByName(spreadsheetName) {
     return DriveApp.getFilesByName(spreadsheetName).next().getId();
 }
@@ -86,10 +84,40 @@ function getColByName(spreadSheetId, sheetName, columnName) {
 
 }
 
+function hasDuplicate(sheet, columnName, value) {
+    const range = columnName + ":" + columnName;
+    const colValues = sheet.getRange(range).getValues().map( e => e[0]);
+    return colValues.indexOf(value) > -1;
+}
+
+function addNewRow(spreadsheetName, sheetName, values, pkColumnName, pkValue) {
+    const spreadSheetId = findSheetIdByName(spreadsheetName);
+
+    lockSheet(spreadSheetId, sheetName);
+
+    const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    const duplicate = hasDuplicate(sheet, pkColumnName, pkValue);
+    if(duplicate) {
+        unlockSheet(spreadSheetId, sheetName);
+        return {
+            errorMessage: 'Cannot create row with duplicate id: ' + pkValue
+        }
+    }
+
+    sheet.insertRowBefore(2);
+
+    values.forEach((value, index) => {
+        sheet.getRange('2:2').getCell(1, index + 1).setValue([value]);
+    })
+
+    unlockSheet(spreadSheetId, sheetName);
+}
+
+
 // Expose public functions by attaching to `global`
+global.addNewRow = addNewRow;
 global.getColByName = getColByName;
 global.deleteSheetRow = deleteSheetRow;
 global.lockSheet = lockSheet;
 global.unlockSheet = unlockSheet;
-global.findWithoutCriteria = findWithoutCriteria;
 global.doGet = doGet;

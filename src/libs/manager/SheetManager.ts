@@ -1,4 +1,4 @@
-import { GoogleAppendValuesResponse, GoogleQueryResponse, GoogleResponse, SheetManagerApi } from "./SheetManagerApi";
+import { GoogleQueryResponse, SheetManagerApi } from "./SheetManagerApi";
 import { GoogleSheetManager } from "./GoogleSheetManager";
 
 class SheetManagerImpl implements SheetManagerApi {
@@ -22,11 +22,17 @@ class SheetManagerImpl implements SheetManagerApi {
     return this.activeSheetManager.findWithoutCriteria(sheet);
   }
 
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
+  create(
+    spreadSheetId: string,
+    sheetName: string,
+    value: string[],
+    pkColumnName: string,
+    pkValue: string
+  ): Promise<void> {
     if (!this.activeSheetManager) {
       throw new Error("Cant use sheet manager locally ");
     }
-    return this.activeSheetManager.create(rowValues);
+    return this.activeSheetManager.create(spreadSheetId, sheetName, value, pkColumnName, pkValue);
   }
 
   delete(spreadSheetId: string, sheetName: string, columnName: string, pkValue: string): Promise<void> {

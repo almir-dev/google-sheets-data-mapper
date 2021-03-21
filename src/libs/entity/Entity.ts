@@ -73,17 +73,33 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * Creates a new entity.
        * @param entry entry
        */
-      static create(entry: T): Promise<T> {
-        const values: string[] = [];
+      static create(entry: T): Promise<void> {
+        const propertyMap: { [index: string]: string } = {};
         for (const key of Object.keys(entry)) {
-          // @ts-ignore
-          const fieldValue = entry[key];
-          values.push(fieldValue);
+          const column = getColumn(entry, key);
+          const joinColumn = getJoinColumn(entry, key);
+
+          if (column) {
+            // @ts-ignore
+            propertyMap[column.columnId] = entry[key];
+          } else if (joinColumn) {
+            // @ts-ignore
+            const referenceEntityPkPropertyKey = entry[key].getPrimaryKeyColumn().fieldPropertyName;
+            // @ts-ignore
+            propertyMap[joinColumn.columnId] = entry[key][referenceEntityPkPropertyKey];
+          }
         }
 
-        return SheetManager.create(values).then(() => {
-          return Promise.resolve(entry);
-        });
+        const sortedColumnIds = Object.keys(propertyMap).sort();
+        const values = sortedColumnIds.map(id => propertyMap[id]);
+
+        // @ts-ignore
+        const pk = entry.getPrimaryKeyColumn();
+        const pkColumnName = pk.columnId;
+        // @ts-ignore
+        const pkValue = entry[pk.fieldPropertyName];
+
+        return SheetManager.create(spreadSheetName, tableName, values, pkColumnName, pkValue);
       }
 
       /**

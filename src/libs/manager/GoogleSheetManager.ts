@@ -1,5 +1,5 @@
 import server from "../../server/server";
-import { GoogleAppendValuesResponse, GoogleQueryResponse, GoogleResponse, SheetManagerApi } from "./SheetManagerApi";
+import { GoogleQueryResponse, SheetManagerApi } from "./SheetManagerApi";
 
 const { serverFunctions } = server;
 
@@ -29,8 +29,21 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
       .catch((error: any) => console.warn("Failed to fetch sheet data without criteria", error));
   }
 
-  create(rowValues: string[]): Promise<GoogleResponse<GoogleAppendValuesResponse>> {
-    return Promise.resolve((undefined as unknown) as GoogleResponse<GoogleAppendValuesResponse>);
+  create(
+    spreadSheetId: string,
+    sheetName: string,
+    values: string[],
+    pkColumnName: string,
+    pkValue: string
+  ): Promise<void> {
+    return serverFunctions
+      .addNewRow(spreadSheetId, sheetName, values, pkColumnName, pkValue)
+      .then((response: { errorMessage?: string }) => {
+        if (response.errorMessage) {
+          console.warn(response.errorMessage);
+          return Promise.reject();
+        }
+      });
   }
 
   delete(spreadSheetId: string, sheetName: string, columnName: string, pkValue: string): Promise<void> {

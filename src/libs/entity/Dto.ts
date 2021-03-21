@@ -50,8 +50,8 @@ export class Dto {
     return Promise.resolve([]);
   }
 
-  static create<T>(entry: T): Promise<T> {
-    return Promise.resolve(({} as unknown) as T);
+  static create<T>(entry: T): Promise<void> {
+    return Promise.resolve();
   }
 
   static delete<T>(entry: T): Promise<void> {

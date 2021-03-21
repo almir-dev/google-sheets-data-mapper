@@ -13,10 +13,35 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  const student = new Student();
-  student.id = "id1";
-
   //Student.delete(student);
+
+  const address = new Address();
+  address.id = "addressId";
+  address.address = "SomeAdress";
+
+  const profesor = new Professor();
+  profesor.id = "profesorId";
+  profesor.address = address;
+
+  const major = new Major();
+  major.id = "majorId";
+  major.name = "Science";
+  major.professor = profesor;
+
+  const eActivity = new ExtracurricularActivity();
+  eActivity.id = "eActivityId";
+  eActivity.name = "Eating";
+
+  const student = new Student();
+  student.name = "Benjamin";
+  student.homeState = "FBIH";
+  student.classLevel = "Senior";
+  student.eActivity = eActivity;
+  student.gender = "Male";
+  student.id = "studentId";
+  student.major = major;
+
+  Student.create(student);
 
   return <div>Working</div>;
 }

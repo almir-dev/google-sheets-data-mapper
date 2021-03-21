@@ -41,7 +41,8 @@ function AppContent() {
   student.id = "studentId";
   student.major = major;
 
-  Student.create(student);
+  //Student.create(student);
+  Student.delete(student);
 
   return <div>Working</div>;
 }

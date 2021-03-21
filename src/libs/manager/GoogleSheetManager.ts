@@ -32,7 +32,7 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
   create(
     spreadSheetId: string,
     sheetName: string,
-    values: string[],
+    values: object[],
     lookupColumnName: string,
     lookupValue: string
   ): Promise<void> {

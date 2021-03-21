@@ -1,5 +1,5 @@
 import { EntityManager } from "./EntityManager";
-import { getJoinColumn } from "./Dto";
+import { getColumn, getJoinColumn } from "./Dto";
 import { EntityMap, EntityMapper } from "./EntityMapper";
 import { SheetManager } from "../manager/SheetManager";
 
@@ -56,6 +56,29 @@ class EntityServiceImpl {
     });
 
     return Promise.resolve(entityList);
+  }
+
+  /**
+   * Retrieves all field values sorted by column names from the given entity.
+   * @param entry entry
+   * @return list of field property values
+   */
+  findValuesFromEntity(entry: any): object[] {
+    const propertyMap: { [index: string]: object } = {};
+    for (const key of Object.keys(entry)) {
+      const column = getColumn(entry, key);
+      const joinColumn = getJoinColumn(entry, key);
+
+      if (column) {
+        propertyMap[column.columnId] = entry[key];
+      } else if (joinColumn) {
+        const referenceEntityPkPropertyKey = entry[key].getPrimaryKeyColumn().fieldPropertyName;
+        propertyMap[joinColumn.columnId] = entry[key][referenceEntityPkPropertyKey];
+      }
+    }
+
+    const sortedColumnIds = Object.keys(propertyMap).sort();
+    return sortedColumnIds.map(id => propertyMap[id]);
   }
 
   /***

@@ -73,30 +73,10 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * Creates a new entity.
        * @param entry entry
        */
-      static create(entry: T): Promise<void> {
-        const propertyMap: { [index: string]: string } = {};
-        for (const key of Object.keys(entry)) {
-          const column = getColumn(entry, key);
-          const joinColumn = getJoinColumn(entry, key);
-
-          if (column) {
-            // @ts-ignore
-            propertyMap[column.columnId] = entry[key];
-          } else if (joinColumn) {
-            // @ts-ignore
-            const referenceEntityPkPropertyKey = entry[key].getPrimaryKeyColumn().fieldPropertyName;
-            // @ts-ignore
-            propertyMap[joinColumn.columnId] = entry[key][referenceEntityPkPropertyKey];
-          }
-        }
-
-        const sortedColumnIds = Object.keys(propertyMap).sort();
-        const values = sortedColumnIds.map(id => propertyMap[id]);
-
-        // @ts-ignore
+      static create(entry: any): Promise<void> {
+        const values = EntityService.findValuesFromEntity(entry);
         const pk = entry.getPrimaryKeyColumn();
         const pkColumnName = pk.columnId;
-        // @ts-ignore
         const pkValue = entry[pk.fieldPropertyName];
 
         return SheetManager.create(spreadSheetName, tableName, values, pkColumnName, pkValue);
@@ -106,10 +86,8 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * Delete an entry.
        * @param entry
        */
-      static delete(entry: T): Promise<void> {
-        // @ts-ignore
+      static delete(entry: any): Promise<void> {
         const pkColumnName = entry.getPrimaryKeyColumn().fieldPropertyName;
-        // @ts-ignore
         const pkValue = entry[pkColumnName];
         return SheetManager.delete(spreadSheetName, tableName, pkColumnName, pkValue);
       }

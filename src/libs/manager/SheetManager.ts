@@ -25,7 +25,7 @@ class SheetManagerImpl implements SheetManagerApi {
   create(
     spreadSheetId: string,
     sheetName: string,
-    value: string[],
+    value: object[],
     pkColumnName: string,
     pkValue: string
   ): Promise<void> {

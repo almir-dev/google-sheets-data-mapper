@@ -2,12 +2,138 @@ export type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
 export type HtmlOutput = GoogleAppsScript.HTML.HtmlOutput;
 
 /**
- * Method needed by google, the generated html out of it will be used to deploy as a web app.
- * @return HtmlOutput html output
+ * Data needed when updating sheet rows
+ * @spreadSheetName name of the spreadSheet
+ * @sheetName name of the sheet
+ * @lookupColumnName name of the column to search key
+ * @updateValue value which will be updated into the sheet
  */
+interface UpdateOperation {
+  spreadSheetName: string;
+  sheetName: string;
+  lookupColumnName: string;
+  updateValues: UpdateValue[];
+}
 
-export function doGet() {
-  return HtmlService.createTemplateFromFile("diploma.html").evaluate();
+/**
+ * Update value.
+ * @lookupValue lookupValue
+ * @values values array
+ */
+interface UpdateValue {
+  lookupValue: object;
+  values: object[];
+}
+
+/**
+ * Sheet map
+ */
+interface SheetMap {
+  [index: string]: Sheet;
+}
+
+/**
+ * Sheet data of a row
+ * @sheet sheet
+ * @range range of the sheet
+ * @values value of the row
+ */
+interface SheetRowData {
+  sheet: Sheet;
+  range: string;
+  values: object[];
+}
+
+/**
+ * Update many sheet rows.
+ * @param updateOperations update operations
+ */
+function updateManySheetRows(updateOperations: UpdateOperation[]) {
+  const sheetMap: SheetMap = {};
+
+  for (const operation of updateOperations) {
+    const { spreadSheetName, sheetName } = operation;
+    const spreadSheetId = getSpreadSheetIdByName(spreadSheetName);
+    sheetMap[sheetName] = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+  }
+
+  const sheetList = Object.values(sheetMap);
+  lockSheetList(sheetList);
+
+  const backupData = createBackupSheetRowData(updateOperations, sheetMap);
+
+  for (const operation of updateOperations) {
+    const { sheetName, lookupColumnName, updateValues } = operation;
+    const sheet = sheetMap[sheetName];
+
+    for (const updateValue of updateValues) {
+      try {
+        updateSingleSheetRow(sheet, lookupColumnName, updateValue);
+      } catch (error) {
+        console.log("WWW failed to update", error);
+        revertSheetUpdate(backupData);
+        break;
+      }
+    }
+  }
+
+  unlockSheetList(sheetList);
+}
+
+/**
+ * Reverts sheet data.
+ * @param backupData backup data
+ */
+function revertSheetUpdate(backupData: SheetRowData[]) {
+  for (const data of backupData) {
+    const { sheet, range, values } = data;
+    sheet.getRange(range).setValues([values]);
+  }
+}
+
+/**
+ * Create a list of sheet row data, by searching data from the update operation queries.
+ * @param updateOperations update operations
+ * @param sheetMap sheet map
+ */
+function createBackupSheetRowData(updateOperations: UpdateOperation[], sheetMap: SheetMap): SheetRowData[] {
+  const backupData: SheetRowData[] = [];
+  for (const operation of updateOperations) {
+    const { sheetName, lookupColumnName, updateValues } = operation;
+    const sheet = sheetMap[sheetName];
+
+    updateValues.forEach((updateValue: UpdateValue) => {
+      const existingRow = getExistingSheetRow(sheet, lookupColumnName, updateValue.lookupValue);
+      backupData.push(existingRow);
+    });
+  }
+  return backupData;
+}
+
+/**
+ * Retrieves the data from a sheet row
+ * @param sheet sheet
+ * @param lookupColumnName lookup column to find the needed row
+ * @param lookupValue lookup value
+ */
+function getExistingSheetRow(sheet: Sheet, lookupColumnName: string, lookupValue: object): SheetRowData {
+  const columnNumber = getColumnNumberByName(sheet, (lookupColumnName as unknown) as object);
+  const rowNumber = getRowNumberByLookupValue(sheet, columnNumber, lookupValue);
+  const range = rowNumber + ":" + rowNumber;
+  const values = sheet.getRange(rowNumber + ":" + rowNumber).getValues()[0];
+  return { sheet, range, values };
+}
+
+/**
+ * Update a single row in a sheet
+ * @param sheet sheet
+ * @param lookupColumnName lookup column to find the needed row
+ * @param updateValue values to update the row
+ */
+function updateSingleSheetRow(sheet: Sheet, lookupColumnName: string, updateValue: UpdateValue) {
+  const columnNumber = getColumnNumberByName(sheet, (lookupColumnName as unknown) as object);
+  const rowNumber = getRowNumberByLookupValue(sheet, columnNumber, updateValue.lookupValue);
+  sheet.getRange(rowNumber + ":" + rowNumber).setValues([updateValue.values]);
 }
 
 /**
@@ -84,11 +210,38 @@ function lockSheet(sheet: Sheet) {
 }
 
 /**
+ * Locks a list of sheets for writer operations, by removing all editors except the current editor.
+ * @param sheetList list of google sheets
+ */
+function lockSheetList(sheetList: Sheet[]) {
+  const currentEditor = Session.getActiveUser().getEmail();
+
+  for (const sheet of sheetList) {
+    const editors = sheet.protect().getEditors();
+
+    editors.forEach(e => {
+      if (e.getEmail() !== currentEditor) {
+        sheet.protect().removeEditor(e.getEmail());
+      }
+    });
+  }
+}
+
+/**
  * Unlocks a sheet by removing the protection on it.
  * @param sheet
  */
 function unlockSheet(sheet: Sheet) {
   sheet.protect().remove();
+}
+
+/**
+ * Unlocks a list of sheets by removing the protection on it.
+ * @param sheetList list of sheets
+ */
+function unlockSheetList(sheetList: Sheet[]) {
+  console.log("WWW unlocking sheets");
+  sheetList.forEach(sheet => sheet.protect().remove());
 }
 
 /**
@@ -161,6 +314,15 @@ function getToken() {
   return ScriptApp.getOAuthToken();
 }
 
+/**
+ * Method needed by google, the generated html out of it will be used to deploy as a web app.
+ * @return HtmlOutput html output
+ */
+
+export function doGet() {
+  return HtmlService.createTemplateFromFile("diploma.html").evaluate();
+}
+
 //--------------------------------------------------------------------------------------------------------------------
 function findWithoutCriteria() {
   const newToken = getToken();
@@ -185,8 +347,10 @@ function convertQueryResponseToDataArray(responseText: string) {
 // Expose public functions by attaching to `global`
 
 // @ts-ignore
-global.doGet = doGet;
+global.updateManySheetRows = updateManySheetRows;
 // @ts-ignore
 global.deleteSheetRow = deleteSheetRow;
 // @ts-ignore
 global.createSheetRow = createSheetRow;
+// @ts-ignore
+global.doGet = doGet;

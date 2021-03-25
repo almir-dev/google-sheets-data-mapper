@@ -17,32 +17,33 @@ function AppContent() {
 
   const address = new Address();
   address.id = "addressId";
-  address.address = "SomeAdress";
+  address.address = "someAddresss234234234";
 
   const profesor = new Professor();
-  profesor.id = "profesorId";
+  profesor.id = "professorId";
+  profesor.name = "profesor name";
   profesor.address = address;
 
   const major = new Major();
   major.id = "majorId";
-  major.name = "Science";
+  major.name = "Science1";
   major.professor = profesor;
 
   const eActivity = new ExtracurricularActivity();
   eActivity.id = "eActivityId";
-  eActivity.name = "Eating";
+  eActivity.name = "Eating1";
 
   const student = new Student();
-  student.name = "Benjamin";
-  student.homeState = "FBIH";
-  student.classLevel = "Senior";
+  student.name = "Benjamin1sdsdsd";
+  student.homeState = "FBIH1sdsdsd";
+  student.classLevel = "Senior1sdsdsdsd";
   student.eActivity = eActivity;
-  student.gender = "Male";
+  student.gender = "Male1";
   student.id = "studentId";
   student.major = major;
 
   //Student.create(student);
-  Student.delete(student);
+  Student.update(student);
 
   return <div>Working</div>;
 }

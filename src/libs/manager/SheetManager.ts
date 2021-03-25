@@ -1,4 +1,4 @@
-import { GoogleQueryResponse, SheetManagerApi } from "./SheetManagerApi";
+import { GoogleQueryResponse, SheetManagerApi, UpdateOperation } from "./SheetManagerApi";
 import { GoogleSheetManager } from "./GoogleSheetManager";
 
 class SheetManagerImpl implements SheetManagerApi {
@@ -40,6 +40,14 @@ class SheetManagerImpl implements SheetManagerApi {
       throw new Error("Cant use sheet manager locally ");
     }
     return this.activeSheetManager.delete(spreadSheetId, sheetName, columnName, pkValue);
+  }
+
+  update(updateOperations: UpdateOperation[]): Promise<void> {
+    if (!this.activeSheetManager) {
+      throw new Error("Cant use sheet manager locally ");
+    }
+
+    return this.activeSheetManager.update(updateOperations);
   }
 
   private isProdEnv(): boolean {

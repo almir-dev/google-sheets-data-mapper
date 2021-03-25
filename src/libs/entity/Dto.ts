@@ -58,5 +58,7 @@ export class Dto {
     return Promise.resolve();
   }
 
-  update() {}
+  static update<T>(entry: T): Promise<void> {
+    return Promise.resolve();
+  }
 }

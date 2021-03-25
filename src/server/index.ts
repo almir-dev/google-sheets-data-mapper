@@ -60,7 +60,13 @@ function updateManySheetRows(updateOperations: UpdateOperation[]) {
   const sheetList = Object.values(sheetMap);
   lockSheetList(sheetList);
 
-  const backupData = createBackupSheetRowData(updateOperations, sheetMap);
+  let backupData;
+  try {
+    backupData = createBackupSheetRowData(updateOperations, sheetMap);
+  } catch {
+    unlockSheetList(sheetList);
+    return;
+  }
 
   for (const operation of updateOperations) {
     const { sheetName, lookupColumnName, updateValues } = operation;

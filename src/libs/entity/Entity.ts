@@ -4,6 +4,7 @@ import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMeta
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
+import { UpdateOperation } from "../manager/SheetManagerApi";
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -93,8 +94,9 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       }
 
       /** Updates the entity. */
-      update() {
-        console.log("WWW update called");
+      static update(entry: any): Promise<void> {
+        const updateOperations: UpdateOperation[] = EntityService.extractUpdateOperations(entry);
+        return SheetManager.update(updateOperations);
       }
     };
   };

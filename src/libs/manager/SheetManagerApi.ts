@@ -2,6 +2,30 @@ export type GoogleQueryResponse = google.visualization.QueryResponse;
 export type GoogleResponse<T> = gapi.client.Response<T>;
 export type GoogleAppendValuesResponse = gapi.client.sheets.AppendValuesResponse;
 
+/**
+ * Data needed when updating sheet rows
+ * @spreadSheetName name of the spreadSheet
+ * @sheetName name of the sheet
+ * @lookupColumnName name of the column to search key
+ * @updateValue value which will be updated into the sheet
+ */
+export interface UpdateOperation {
+  spreadSheetName: string;
+  sheetName: string;
+  lookupColumnName: string;
+  updateValues: UpdateValue[];
+}
+
+/**
+ * Update value.
+ * @lookupValue lookupValue
+ * @values values array
+ */
+export interface UpdateValue {
+  lookupValue: object;
+  values: object[];
+}
+
 export interface SheetManagerApi {
   findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse>;
 
@@ -31,4 +55,6 @@ export interface SheetManagerApi {
    * @param lookupValue value of the row id which will be deleted
    */
   delete(spreadSheetId: string, sheetName: string, lookupColumnName: string, lookupValue: string): Promise<void>;
+
+  update(updateOperations: UpdateOperation[]): Promise<void>;
 }

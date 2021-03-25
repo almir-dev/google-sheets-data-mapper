@@ -1,5 +1,5 @@
 import server from "../../server/server";
-import { GoogleQueryResponse, SheetManagerApi } from "./SheetManagerApi";
+import { GoogleQueryResponse, SheetManagerApi, UpdateOperation } from "./SheetManagerApi";
 
 class GoogleSheetManagerImpl implements SheetManagerApi {
   private readonly serverFunctions = server.serverFunctions;
@@ -50,6 +50,10 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
     return this.serverFunctions
       .deleteSheetRow(spreadSheetId, sheetName, lookupColumnName, lookupValue)
       .catch((error: any) => console.log("Failed to delete row entry", error));
+  }
+
+  update(updateOperations: UpdateOperation[]): Promise<void> {
+    return this.serverFunctions.updateManySheetRows(updateOperations);
   }
 }
 

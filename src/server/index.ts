@@ -53,8 +53,10 @@ function updateManySheetRows(updateOperations: UpdateOperation[]) {
 
   for (const operation of updateOperations) {
     const { spreadSheetName, sheetName } = operation;
-    const spreadSheetId = getSpreadSheetIdByName(spreadSheetName);
-    sheetMap[sheetName] = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    if (!sheetMap[sheetName]) {
+      const spreadSheetId = getSpreadSheetIdByName(spreadSheetName);
+      sheetMap[sheetName] = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+    }
   }
 
   const sheetList = Object.values(sheetMap);
@@ -76,7 +78,6 @@ function updateManySheetRows(updateOperations: UpdateOperation[]) {
       try {
         updateSingleSheetRow(sheet, lookupColumnName, updateValue);
       } catch (error) {
-        console.log("WWW failed to update", error);
         revertSheetUpdate(backupData);
         break;
       }

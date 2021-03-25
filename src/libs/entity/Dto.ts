@@ -61,4 +61,8 @@ export class Dto {
   static update<T>(entry: T): Promise<void> {
     return Promise.resolve();
   }
+
+  static updateMany<T>(entryList: T[]): Promise<void> {
+    return Promise.resolve();
+  }
 }

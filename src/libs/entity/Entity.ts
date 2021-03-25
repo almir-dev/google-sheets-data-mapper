@@ -98,6 +98,17 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         const updateOperations: UpdateOperation[] = EntityService.extractUpdateOperations(entry);
         return SheetManager.update(updateOperations);
       }
+
+      /** Updates a list of entries*/
+      // TODO can be optimized more
+      static updateMany(entryList: any[]): Promise<void> {
+        const updateOperations: UpdateOperation[] = [];
+        for (const entryListElement of entryList) {
+          updateOperations.push(...EntityService.extractUpdateOperations(entryListElement));
+        }
+
+        return SheetManager.update(updateOperations);
+      }
     };
   };
 }

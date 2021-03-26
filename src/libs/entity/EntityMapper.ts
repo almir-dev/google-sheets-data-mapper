@@ -107,31 +107,15 @@ class EntityMapperImpl {
     return elements;
   }
 
-  private static indexToColumnId(index: number): string {
-    switch (index) {
-      case 0:
-        return "A";
-      case 1:
-        return "B";
-      case 2:
-        return "C";
-      case 3:
-        return "D";
-      case 4:
-        return "E";
-      case 5:
-        return "F";
-      case 6:
-        return "G";
-      case 7:
-        return "H";
-      case 8:
-        return "I";
-      case 9:
-        return "J";
+  private static indexToColumnId(index: number) {
+    let temp;
+    let letter = "";
+    while (index > 0) {
+      temp = (index - 1) % 26;
+      letter = String.fromCharCode(temp + 65) + letter;
+      index = (index - temp - 1) / 26;
     }
-
-    return "A";
+    return letter;
   }
 }
 

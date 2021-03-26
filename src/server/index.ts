@@ -330,18 +330,19 @@ export function doGet() {
   return HtmlService.createTemplateFromFile("diploma.html").evaluate();
 }
 
-//--------------------------------------------------------------------------------------------------------------------
-function findWithoutCriteria() {
+function findWithoutCriteria(spreadsheetName: string, sheetName: string) {
   const newToken = getToken();
-  const request =
-    "https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/gviz/tq?access_token=" +
-    newToken +
-    "&select%20*%20&sheet=StudentTable&tqx=reqId%3A0";
+  const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
+
+  let request = "https://docs.google.com/spreadsheets/d/";
+  request += spreadSheetId;
+  request += "/gviz/tq?access_token=" + newToken;
+  request += "&select%20*%20";
+  request += "&sheet=" + sheetName;
+  request += "&tqx=reqId%3A0";
 
   const response = UrlFetchApp.fetch(request).getContentText();
-  const dataTable = convertQueryResponseToDataArray(response);
-
-  return dataTable;
+  return convertQueryResponseToDataArray(response);
 }
 
 function convertQueryResponseToDataArray(responseText: string) {
@@ -353,6 +354,8 @@ function convertQueryResponseToDataArray(responseText: string) {
 
 // Expose public functions by attaching to `global`
 
+// @ts-ignore
+global.findWithoutCriteria = findWithoutCriteria;
 // @ts-ignore
 global.updateManySheetRows = updateManySheetRows;
 // @ts-ignore

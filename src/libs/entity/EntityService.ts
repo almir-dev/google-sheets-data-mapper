@@ -21,11 +21,12 @@ interface ReferenceEntityJoinProps {
 class EntityServiceImpl {
   /**
    * Finds all entities and all their referenced children.
+   * @param spreadSheetName name of the spreadSheet
    * @param tableName table name
    * @param entityName entity name
    */
-  async findEntities(tableName: string, entityName: string) {
-    const entityList = await this.findEntitiesWithoutReferences(tableName, entityName);
+  async findEntities(spreadSheetName: string, tableName: string, entityName: string) {
+    const entityList = await this.findEntitiesWithoutReferences(spreadSheetName, tableName, entityName);
     const referenceMap = await this.getReferenceEntityMap(entityName);
 
     const joinProperties = this.getJoinFieldsFromClass(entityName);
@@ -129,12 +130,17 @@ class EntityServiceImpl {
 
   /***
    * Finds all entities for the given table name and entity name, without touching reference fields.
+   * @param spreadSheetName name of the spreadSheet
    * @param tableName name of the table corresponding to the entity
    * @param entityName name of the entity
    * @return promise of list of entities
    */
-  private findEntitiesWithoutReferences<T>(tableName: string, entityName: string): Promise<T[]> {
-    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+  private findEntitiesWithoutReferences<T>(
+    spreadSheetName: string,
+    tableName: string,
+    entityName: string
+  ): Promise<T[]> {
+    return SheetManager.findWithoutCriteria(spreadSheetName, tableName).then(googleQueryResponse => {
       const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
       return Promise.resolve(entityObjectList);
@@ -158,12 +164,17 @@ class EntityServiceImpl {
 
   /***
    * Finds all entities for the given table name and entity name, without touching reference fields.
+   * @param spreadSheetName name of the spreadsheet
    * @param tableName name of the table corresponding to the entity
    * @param entityName name of the entity
    * @return promise of list of entities
    */
-  private findEntitiesWithoutReferencesAsMap<T>(tableName: string, entityName: string): Promise<EntityMap<T>> {
-    return SheetManager.findWithoutCriteria(tableName).then(googleQueryResponse => {
+  private findEntitiesWithoutReferencesAsMap<T>(
+    spreadSheetName: string,
+    tableName: string,
+    entityName: string
+  ): Promise<EntityMap<T>> {
+    return SheetManager.findWithoutCriteria(spreadSheetName, tableName).then(googleQueryResponse => {
       const entityObjectMap: EntityMap<T> = EntityMapper.toEntityObjectMap(googleQueryResponse, entityName);
 
       return entityObjectMap;
@@ -226,11 +237,19 @@ class EntityServiceImpl {
    * @param propertyName property name
    */
   private getReferenceEntitiesForProperty(targetClassName: string, propertyName: string) {
-    const targetClassObject = EntityManager.entityMap[targetClassName];
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
     const referenceEntityName = EntityService.getReferenceEntityNameFromProperty(targetClassObject, propertyName);
-    const referenceTableName = EntityManager.entityMap[referenceEntityName].getTableName();
 
-    return EntityService.findEntitiesWithoutReferencesAsMap(referenceTableName, referenceEntityName).then(map => {
+    //TODO instanciation can be optimized
+    const referenceEntityObject = new EntityManager.entityMap[referenceEntityName]();
+    const referenceSpreadSheetName = referenceEntityObject.getSpreadsheetName();
+    const referenceTableName = referenceEntityObject.getTableName();
+
+    return EntityService.findEntitiesWithoutReferencesAsMap(
+      referenceSpreadSheetName,
+      referenceTableName,
+      referenceEntityName
+    ).then(map => {
       return Promise.resolve({ key: propertyName, targetClass: targetClassName, map });
     });
   }
@@ -251,7 +270,7 @@ class EntityServiceImpl {
    * @return list of property names
    */
   private getJoinFieldsFromClass(targetClassName: string): string[] {
-    const targetClassObject = EntityManager.entityMap[targetClassName];
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
     const joinFieldProperties: string[] = [];
     Object.keys(targetClassObject).forEach(key => {
       if (getJoinColumn(targetClassObject, key)) {
@@ -268,7 +287,7 @@ class EntityServiceImpl {
    * @return array of ReferenceEntityJoinProps
    */
   private getReferenceEntityJoinProps(targetClassName: string): ReferenceEntityJoinProps[] {
-    const targetClassObject = EntityManager.entityMap[targetClassName];
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
     const joinFieldProperties: ReferenceEntityJoinProps[] = [];
     Object.keys(targetClassObject).forEach(key => {
       const joinColumn = getJoinColumn(targetClassObject, key);

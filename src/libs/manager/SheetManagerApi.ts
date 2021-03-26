@@ -27,7 +27,12 @@ export interface UpdateValue {
 }
 
 export interface SheetManagerApi {
-  findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse>;
+  /**
+   * Searches all values from a sheet.
+   * @param spreadSheetName name of the spreadSheet
+   * @param sheetName name of sheet
+   */
+  findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse>;
 
   findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse>;
 
@@ -56,5 +61,9 @@ export interface SheetManagerApi {
    */
   delete(spreadSheetId: string, sheetName: string, lookupColumnName: string, lookupValue: string): Promise<void>;
 
+  /**
+   * Updates rows in sheets based on the update operations.
+   * @param updateOperations update operations
+   */
   update(updateOperations: UpdateOperation[]): Promise<void>;
 }

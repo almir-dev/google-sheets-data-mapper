@@ -19,9 +19,8 @@ class EntityMapperImpl {
     const results: T[] = [];
 
     for (const element of data) {
-      const targetClassObject = EntityManager.entityMap[targetClassName];
+      const targetClassObject = new EntityManager.entityMap[targetClassName]();
       const result = this.createEntityObject<T>(targetClassObject, element);
-
       results.push(result);
     }
 
@@ -39,7 +38,7 @@ class EntityMapperImpl {
     const primaryKeyPropertyName = this.findPropertyNameOfPrimaryKey(targetClassName);
 
     for (const element of data) {
-      const targetClassObject = EntityManager.entityMap[targetClassName];
+      const targetClassObject = new EntityManager.entityMap[targetClassName]();
       const entityObject = this.createEntityObject<T>(targetClassObject, element);
       // @ts-ignore
       const pkValue = entityObject[primaryKeyPropertyName];
@@ -56,7 +55,7 @@ class EntityMapperImpl {
    * @return name of the primary property
    */
   private findPropertyNameOfPrimaryKey(targetClassName: string): string {
-    const targetClassObject = EntityManager.entityMap[targetClassName];
+    const targetClassObject = new EntityManager.entityMap[targetClassName]();
 
     // @ts-ignore
     const primaryKey: string[] = Object.keys(targetClassObject)

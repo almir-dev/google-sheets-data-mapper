@@ -15,11 +15,11 @@ class SheetManagerImpl implements SheetManagerApi {
     return this.activeSheetManager.findByCriteria(searchQuery, sheet);
   }
 
-  findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse> {
+  findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse> {
     if (!this.activeSheetManager) {
       throw new Error("Cant use sheet manager locally ");
     }
-    return this.activeSheetManager.findWithoutCriteria(sheet);
+    return this.activeSheetManager.findWithoutCriteria(spreadSheetName, sheetName);
   }
 
   create(

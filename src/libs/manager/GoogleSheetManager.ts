@@ -8,9 +8,9 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
     return Promise.resolve((undefined as unknown) as GoogleQueryResponse);
   }
 
-  findWithoutCriteria(sheet: string): Promise<GoogleQueryResponse> {
+  findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse> {
     return this.serverFunctions
-      .findWithoutCriteria()
+      .findWithoutCriteria(spreadSheetName, sheetName)
       .then((response: any) => {
         const googleResponse = {
           getDataTable: () => {
@@ -30,14 +30,14 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
   }
 
   create(
-    spreadSheetId: string,
+    spreadSheetName: string,
     sheetName: string,
     values: object[],
     lookupColumnName: string,
     lookupValue: string
   ): Promise<void> {
     return this.serverFunctions
-      .createSheetRow(spreadSheetId, sheetName, values, lookupColumnName, lookupValue)
+      .createSheetRow(spreadSheetName, sheetName, values, lookupColumnName, lookupValue)
       .then((response: { errorMessage?: string }) => {
         if (response?.errorMessage) {
           console.log(response.errorMessage);
@@ -46,9 +46,9 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
       });
   }
 
-  delete(spreadSheetId: string, sheetName: string, lookupColumnName: string, lookupValue: string): Promise<void> {
+  delete(spreadSheetName: string, sheetName: string, lookupColumnName: string, lookupValue: string): Promise<void> {
     return this.serverFunctions
-      .deleteSheetRow(spreadSheetId, sheetName, lookupColumnName, lookupValue)
+      .deleteSheetRow(spreadSheetName, sheetName, lookupColumnName, lookupValue)
       .catch((error: any) => console.log("Failed to delete row entry", error));
   }
 

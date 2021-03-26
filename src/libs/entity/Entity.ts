@@ -58,7 +58,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
 
       /** Finds all entities. */
       static async findAll(): Promise<T[]> {
-        return ((await EntityService.findEntities(tableName, entityName)) as unknown) as T[];
+        return ((await EntityService.findEntities(spreadSheetName, tableName, entityName)) as unknown) as T[];
       }
 
       /**

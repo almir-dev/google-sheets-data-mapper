@@ -1,9 +1,7 @@
 import React from "react";
-import style from "./StudentView.module.scss";
 import { Student } from "../entity/Student";
 import { StudentService } from "../service/StudentService";
-import { Students } from "./Students";
-import { Filters } from "./Filters";
+import styles from "./StudentView.module.scss";
 
 export function StudentView() {
   React.useEffect(() => {
@@ -16,14 +14,5 @@ export function StudentView() {
 }
 
 export function StudentViewContent({ students }: { students: Student[] }) {
-  return (
-    <div className={"row no-gutters " + style.studentView}>
-      <div className={"col-3"}>
-        <Filters />
-      </div>
-      <div className={"col"}>
-        <Students students={students} />
-      </div>
-    </div>
-  );
+  return <div className={styles.studentView}>Almir</div>;
 }

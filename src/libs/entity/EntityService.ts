@@ -140,14 +140,16 @@ class EntityServiceImpl {
     tableName: string,
     entityName: string
   ): Promise<T[]> {
-    return SheetManager.findWithoutCriteria(spreadSheetName, tableName).then(googleQueryResponse => {
-      const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
+    return SheetManager.findWithoutCriteria(spreadSheetName, tableName)
+      .then(googleQueryResponse => {
+        const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
-      return Promise.resolve(entityObjectList);
-    }).catch(error => {
-      console.log('Failed to findEntitiesWithoutReferences ', error);
-      return Promise.reject();
-    });
+        return Promise.resolve(entityObjectList);
+      })
+      .catch(error => {
+        console.log("Failed to findEntitiesWithoutReferences ", error);
+        return Promise.reject();
+      });
   }
 
   /***

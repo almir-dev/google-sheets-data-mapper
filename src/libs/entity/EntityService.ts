@@ -144,6 +144,9 @@ class EntityServiceImpl {
       const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
 
       return Promise.resolve(entityObjectList);
+    }).catch(error => {
+      console.log('Failed to findEntitiesWithoutReferences ', error);
+      return Promise.reject();
     });
   }
 

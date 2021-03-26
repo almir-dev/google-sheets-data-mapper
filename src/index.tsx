@@ -15,6 +15,9 @@ function AppContent() {
 
   Student.findAll().then(result => {
     console.log("WWW result", result);
+    const foo: Student = (result[2] as unknown) as Student;
+    foo.name = "Updated name";
+    //Student.update(foo);
   });
 
   return <div>Working</div>;

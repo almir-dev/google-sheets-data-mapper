@@ -82,8 +82,9 @@ class EntityMapperImpl {
     }
 
     row.forEach((column, index) => {
+      const columnName = EntityMapperImpl.indexToColumnId(index + 1);
       // @ts-ignore
-      target[fieldsMap[EntityMapperImpl.indexToColumnId(index)]] = row[index];
+      target[fieldsMap[columnName]] = row[index];
     });
 
     return target;

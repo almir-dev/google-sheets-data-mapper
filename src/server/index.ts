@@ -1,3 +1,5 @@
+import { Script } from "vm";
+
 export type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
 export type HtmlOutput = GoogleAppsScript.HTML.HtmlOutput;
 
@@ -321,15 +323,6 @@ function getToken() {
   return ScriptApp.getOAuthToken();
 }
 
-/**
- * Method needed by google, the generated html out of it will be used to deploy as a web app.
- * @return HtmlOutput html output
- */
-
-export function doGet() {
-  return HtmlService.createTemplateFromFile("diploma.html").evaluate();
-}
-
 function findWithoutCriteria(spreadsheetName: string, sheetName: string) {
   const newToken = getToken();
   const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
@@ -352,6 +345,15 @@ function convertQueryResponseToDataArray(responseText: string) {
   return JSON.parse(jsonText).table;
 }
 
+/**
+ * Method needed by google, the generated html out of it will be used to deploy as a web app.
+ * @return HtmlOutput html output
+ */
+
+export function doGet() {
+  return HtmlService.createTemplateFromFile("diploma.html").evaluate();
+}
+
 // Expose public functions by attaching to `global`
 
 // @ts-ignore
@@ -362,5 +364,7 @@ global.updateManySheetRows = updateManySheetRows;
 global.deleteSheetRow = deleteSheetRow;
 // @ts-ignore
 global.createSheetRow = createSheetRow;
+// @ts-ignore
+global.getCurrentUserEmail = getCurrentUserEmail;
 // @ts-ignore
 global.doGet = doGet;

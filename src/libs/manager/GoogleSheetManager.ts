@@ -15,10 +15,10 @@ class GoogleSheetManagerImpl implements SheetManagerApi {
         const googleResponse = {
           getDataTable: () => {
             return {
-              getNumberOfRows: () => response.rows.length,
+              getNumberOfRows: () => response.rows.length - 1,
               getNumberOfColumns: () => response.cols.length,
               getValue: (x: number, y: number) => {
-                return response.rows[x].c[y].v;
+                return response.rows[x + 1].c[y].v;
               }
             };
           }

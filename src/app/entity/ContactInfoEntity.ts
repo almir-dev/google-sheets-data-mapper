@@ -1,13 +1,13 @@
 import { Entity } from "../../libs/entity/Entity";
 import { Column, Dto, PrimaryKey } from "../../libs/entity/Dto";
 
-@Entity("StudentsSpreadsheet", "AddressTable", "Address")
-export class Address extends Dto {
+@Entity("StudentsSpreadsheet", "ContactInfoTable", "ContactInfoEntity")
+export class ContactInfoEntity extends Dto {
   @PrimaryKey()
   @Column("A")
   id = "";
   @Column("B")
-  address = "";
+  city = "";
+  @Column("C")
+  phoneNumber = "";
 }
-
-export const AddressInstance = new Address();

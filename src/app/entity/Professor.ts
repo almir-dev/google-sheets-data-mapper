@@ -1,5 +1,6 @@
 import { Entity } from "../../libs/entity/Entity";
 import { Column, Dto, JoinColumn, PrimaryKey } from "../../libs/entity/Dto";
+import { DepartmentEntity } from "./DepartmentEntity";
 
 @Entity("StudentsSpreadsheet", "ProfessorTable", "ProfessorEntity")
 export class ProfessorEntity extends Dto {
@@ -11,5 +12,5 @@ export class ProfessorEntity extends Dto {
   @Column("C")
   address = "";
   @JoinColumn("D", "DepartmentEntity")
-  department = {};
+  department = ({} as unknown) as DepartmentEntity;
 }

@@ -1,4 +1,7 @@
 import { FacultyEntity } from "../../entity/FacultyEntity";
+import { DepartmentEntity } from "../../entity/DepartmentEntity";
+import { ProfessorEntity } from "../../entity/Professor";
+import { ClassEntity } from "../../entity/ClassEntity";
 
 class FacultyServiceImpl {
   getAllFaculties(): Promise<FacultyEntity[]> {
@@ -7,6 +10,59 @@ class FacultyServiceImpl {
     }
 
     return FacultyEntity.findAll();
+  }
+
+  getDepartmentNames(facultyId: string): Promise<string[]> {
+    if (!this.isProdEnv()) {
+      const departments = createMockDepartments();
+      const names = departments.filter(d => d.faculty.id === facultyId).map(d => d.name);
+      return Promise.resolve(names);
+    }
+
+    return DepartmentEntity.findAll<DepartmentEntity>().then((result: DepartmentEntity[]) => {
+      const facultyDepartments = result.filter(dep => dep.faculty.id === facultyId);
+      return facultyDepartments.map(dep => dep.name);
+    });
+  }
+
+  getProfessorNames(facultyId: string): Promise<string[]> {
+    if (!this.isProdEnv()) {
+      const mockDepartments = createMockDepartments();
+      const mockProfessors = createMockProfessors();
+
+      const departmentIds = mockDepartments.filter(d => d.faculty.id === facultyId).map(d => d.id);
+      const names = mockProfessors.filter(p => departmentIds.indexOf(p.id) !== -1).map(p => p.name);
+      return Promise.resolve(names);
+    }
+
+    return DepartmentEntity.findAll<DepartmentEntity>().then(departments => {
+      const departmentIds = departments.filter(d => d.faculty.id === facultyId).map(d => d.id);
+      return ProfessorEntity.findAll<ProfessorEntity>().then(professors => {
+        return professors.filter(p => departmentIds.indexOf(p.id) !== -1).map(p => p.name);
+      });
+    });
+  }
+
+  getClassNames(facultyId: string): Promise<string[]> {
+    if (!this.isProdEnv()) {
+      const mockDepartments = createMockDepartments();
+      const mockClasses = createMockClasses();
+
+      const departmentIds = mockDepartments.filter(d => d.faculty.id === facultyId).map(d => d.id);
+      const names = mockClasses.filter(c => departmentIds.indexOf(c.id) !== -1).map(c => c.name);
+      return Promise.resolve(names);
+    }
+
+    return DepartmentEntity.findAll<DepartmentEntity>().then(departments => {
+      const departmentIds = departments.filter(d => d.faculty.id === facultyId).map(d => d.id);
+      return ClassEntity.findAll<ProfessorEntity>().then(clazz => {
+        return clazz.filter(c => departmentIds.indexOf(c.id) !== -1).map(c => c.name);
+      });
+    });
+  }
+
+  getNumberOfStudents(facultyId: string): Promise<number> {
+    return Promise.resolve(0);
   }
 
   private isProdEnv(): boolean {
@@ -102,6 +158,114 @@ function createFaculty(
   faculty.description = description;
 
   return faculty;
+}
+
+function createMockDepartments(): DepartmentEntity[] {
+  const faculties = createMockFaculties();
+
+  const department1 = createDepartment("id1", "Department Of Telecomunications", faculties[1]);
+  const department2 = createDepartment("id2", "Department Of Applied Computer Science", faculties[1]);
+  const department3 = createDepartment("id3", "Department Of Theoretical Math", faculties[3]);
+  const department4 = createDepartment("id4", "Department Of Applied Math", faculties[3]);
+  const department5 = createDepartment("id5", "Department Of Theoretical Physics", faculties[2]);
+  const department6 = createDepartment("id6", "Department Of Applied Physcis", faculties[2]);
+  const department7 = createDepartment("id7", "Department Of Theoretical Sport", faculties[6]);
+  const department8 = createDepartment("id8", "Department Of Applied Sport", faculties[6]);
+  const department9 = createDepartment("id9", "Department Of Strong Current", faculties[0]);
+  const department10 = createDepartment("id10", "Department Of Filmindustry", faculties[4]);
+  const department11 = createDepartment("id11", "Department Of Drama", faculties[5]);
+
+  return [
+    department1,
+    department2,
+    department3,
+    department4,
+    department6,
+    department7,
+    department8,
+    department9,
+    department10,
+    department11
+  ];
+}
+
+function createDepartment(id: string, name: string, faculty: FacultyEntity): DepartmentEntity {
+  const department = new DepartmentEntity();
+
+  department.id = id;
+  department.name = name;
+  department.faculty = faculty;
+
+  return department;
+}
+
+function createMockProfessors(): ProfessorEntity[] {
+  const mockDepartments = createMockDepartments();
+
+  const professor1 = createProfessor("id1", "Dr. Jack Anderson", "4607 Watson Street (NJ)", mockDepartments[9]);
+  const professor2 = createProfessor("id2", "Dr. Edward Jones", "222 Arthur Avenue (IL)", mockDepartments[8]);
+  const professor3 = createProfessor("id3", "Dr. Elizabeth Swan", "4656 Fulton Street (WV)", mockDepartments[0]);
+  const professor4 = createProfessor("id4", "Dr. Mary Jenkins", "3021 Woodstock Drive (CA)", mockDepartments[1]);
+  const professor5 = createProfessor("id5", "Dr. Alex Vance", "3485 Ashcraft Court (CA)", mockDepartments[2]);
+  const professor6 = createProfessor("id6", "Dr. Gordon Freeman", "1663 Wildrose Lane (MI)", mockDepartments[4]);
+  const professor7 = createProfessor("id", "Dr. Wallace Breen", "3543 Five Points (MD)", mockDepartments[3]);
+  const professor8 = createProfessor("id8", "Dr. Barney Coulhun", "2818 Briercliff Road (NY)", mockDepartments[5]);
+  const professor9 = createProfessor("id9", "Dr. Judith Mossman", "1852 Wood Street (CA)", mockDepartments[6]);
+  const professor10 = createProfessor("id10", "Dr. Isac Kleiner", "4572 Saint Marys Avenue (NY)", mockDepartments[7]);
+  const professor11 = createProfessor("id11", "Dr. Richard Keller", "2455 Cimmaron Road (CA)", mockDepartments[10]);
+
+  return [
+    professor1,
+    professor2,
+    professor3,
+    professor4,
+    professor5,
+    professor6,
+    professor7,
+    professor8,
+    professor9,
+    professor10,
+    professor11
+  ];
+}
+
+function createProfessor(id: string, name: string, address: string, department: DepartmentEntity): ProfessorEntity {
+  const professor = new ProfessorEntity();
+
+  professor.id = id;
+  professor.name = name;
+  professor.department = department;
+  professor.address = address;
+
+  return professor;
+}
+
+function createMockClasses(): ClassEntity[] {
+  const departments = createMockDepartments();
+  const professors = createMockProfessors();
+
+  const clazz1 = createClass("id1", "Telecomunications 101", departments[0], professors[0]);
+  const clazz2 = createClass("id2", "Applied Computer Science 101", departments[1], professors[1]);
+  const clazz3 = createClass("id3", "Theoretical Math 1", departments[2], professors[4]);
+  const clazz4 = createClass("id4", "Applied Math In Engineering", departments[3], professors[7]);
+  const clazz5 = createClass("id5", "Theoretical Physics 101", departments[4], professors[2]);
+  const clazz6 = createClass("id6", "Applied Physics 101", departments[5], professors[8]);
+  const clazz7 = createClass("id7", "Basic Tennis", departments[7], professors[6]);
+  const clazz8 = createClass("id8", "Film Expenses 101", departments[9], professors[7]);
+  const clazz9 = createClass("id9", "Drama 101", departments[10], professors[5]);
+
+  return [clazz1, clazz2, clazz3, clazz4, clazz5, clazz6, clazz7, clazz8, clazz9];
+}
+
+function createClass(id: string, name: string, department: DepartmentEntity, professor: ProfessorEntity): ClassEntity {
+  const clazz = new ClassEntity();
+
+  clazz.id = id;
+  clazz.name = name;
+  clazz.department = department;
+  clazz.professor = professor;
+
+  return clazz;
 }
 
 export const FacultyService = new FacultyServiceImpl();

@@ -1,5 +1,3 @@
-import { Script } from "vm";
-
 export type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
 export type HtmlOutput = GoogleAppsScript.HTML.HtmlOutput;
 
@@ -345,6 +343,10 @@ function convertQueryResponseToDataArray(responseText: string) {
   return JSON.parse(jsonText).table;
 }
 
+function foo() {
+  console.log("WWW FOOO");
+}
+
 /**
  * Method needed by google, the generated html out of it will be used to deploy as a web app.
  * @return HtmlOutput html output
@@ -356,6 +358,8 @@ export function doGet() {
 
 // Expose public functions by attaching to `global`
 
+// @ts-ignore
+global.foo = foo;
 // @ts-ignore
 global.findWithoutCriteria = findWithoutCriteria;
 // @ts-ignore

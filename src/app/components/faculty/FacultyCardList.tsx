@@ -31,7 +31,7 @@ export function FacultyCardList() {
 
   const cards = facultyList.map(faculty => {
     return (
-      <Grid item>
+      <Grid item key={faculty.id}>
         <FacultyCard faculty={faculty} />
       </Grid>
     );

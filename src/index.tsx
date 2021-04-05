@@ -15,12 +15,6 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  StudentEntity.findAll()
-    .then(results => {
-      console.log("WWW result", results);
-    })
-    .catch(error => console.log("WWW Failed", error));
-
   return <FacultyView />;
 }
 

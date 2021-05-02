@@ -1,6 +1,14 @@
 import "reflect-metadata";
 import { ColumnProperties, EntityService } from "./EntityService";
-import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
+import {
+  ColumnMetaData,
+  getColumn,
+  getJoinColumn,
+  getOneToManyColumn,
+  getPrimaryKey,
+  JoinColumnMetaData,
+  OneToManyColumnMetaData
+} from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
@@ -16,6 +24,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
           const joinColumnKey: JoinColumnMetaData = getJoinColumn(this, key);
+          const oneToManyColumnKey: OneToManyColumnMetaData = getOneToManyColumn(this, key);
           const primaryKey: boolean = getPrimaryKey(this, key);
 
           if (columnKey && columnKey.columnId) {
@@ -24,6 +33,9 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
           } else if (joinColumnKey) {
             // @ts-ignore
             this[key] = joinColumnKey.columnId;
+          } else if (oneToManyColumnKey) {
+            // @ts-ignore
+            this[key] = oneToManyColumnKey.columnId;
           }
 
           if (primaryKey) {
@@ -67,7 +79,12 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        */
       static async find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return ((await EntityService.findEntitiesWithQuery(tableName, entityName, query)) as unknown) as T[];
+        return ((await EntityService.findEntitiesWithQuery(
+          spreadSheetName,
+          tableName,
+          entityName,
+          query
+        )) as unknown) as T[];
       }
 
       /**

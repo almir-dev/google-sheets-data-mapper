@@ -1,5 +1,6 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto, PrimaryKey } from "../../libs/entity/Dto";
+import { Column, Dto, OneToMany, PrimaryKey } from "../../libs/entity/Dto";
+import { DepartmentEntity } from "./DepartmentEntity";
 
 @Entity("StudentsSpreadsheet", "FacultyTable", "FacultyEntity")
 export class FacultyEntity extends Dto {
@@ -18,4 +19,6 @@ export class FacultyEntity extends Dto {
   address = "";
   @Column("G")
   description = "";
+  @OneToMany("faculty", "DepartmentEntity")
+  departments: DepartmentEntity[] = [];
 }

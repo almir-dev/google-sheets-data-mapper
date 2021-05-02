@@ -2,6 +2,7 @@ import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
 const joinColumnMetadataKey = Symbol("joinColumn");
+const oneToManyMetadataKey = Symbol("oneToManyColumn");
 const primaryKeyMetadataKey = Symbol("primaryKey");
 
 export interface ColumnMetaData {
@@ -13,8 +14,17 @@ export interface JoinColumnMetaData {
   referenceEntity: string;
 }
 
+export interface OneToManyColumnMetaData {
+  columnId: string;
+  referenceEntity: string;
+}
+
 export function Column(columnId: string) {
   return Reflect.metadata(columnMetadataKey, { columnId });
+}
+
+export function OneToMany(mappedBy: string, referenceEntity: string) {
+  return Reflect.metadata(oneToManyMetadataKey, { mappedBy, referenceEntity });
 }
 
 export function JoinColumn(columnId: string, referenceEntity: string) {
@@ -27,6 +37,10 @@ export function getColumn(target: any, propertyKey: string) {
 
 export function getJoinColumn(target: any, propertyKey: string) {
   return Reflect.getMetadata(joinColumnMetadataKey, target, propertyKey);
+}
+
+export function getOneToManyColumn(target: any, propertyKey: string) {
+  return Reflect.getMetadata(oneToManyMetadataKey, target, propertyKey);
 }
 
 export function PrimaryKey() {

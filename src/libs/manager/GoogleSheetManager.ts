@@ -4,8 +4,25 @@ import { GoogleQueryResponse, SheetManagerApi, UpdateOperation } from "./SheetMa
 class GoogleSheetManagerImpl implements SheetManagerApi {
   private readonly serverFunctions = server.serverFunctions;
 
-  findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
-    return Promise.resolve((undefined as unknown) as GoogleQueryResponse);
+  findByCriteria(query: string, spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse> {
+    return this.serverFunctions
+      .findWithCriteria(query, spreadSheetName, sheetName)
+      .then((response: any) => {
+        const googleResponse = {
+          getDataTable: () => {
+            return {
+              getNumberOfRows: () => response.rows.length - 1,
+              getNumberOfColumns: () => response.cols.length,
+              getValue: (x: number, y: number) => {
+                return response.rows[x + 1].c[y].v;
+              }
+            };
+          }
+        };
+
+        return Promise.resolve(googleResponse);
+      })
+      .catch((error: any) => console.log("Failed to fetch sheet data with criteria", error));
   }
 
   findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse> {

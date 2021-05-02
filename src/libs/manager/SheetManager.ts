@@ -8,11 +8,11 @@ class SheetManagerImpl implements SheetManagerApi {
     this.activeSheetManager = this.isProdEnv() ? GoogleSheetManager : undefined;
   }
 
-  findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse> {
+  findByCriteria(query: string, spreadsheetName: string, sheetName: string): Promise<GoogleQueryResponse> {
     if (!this.activeSheetManager) {
       throw new Error("Cant use sheet manager locally ");
     }
-    return this.activeSheetManager.findByCriteria(searchQuery, sheet);
+    return this.activeSheetManager.findByCriteria(query, spreadsheetName, sheetName);
   }
 
   findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse> {

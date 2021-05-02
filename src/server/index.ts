@@ -336,6 +336,21 @@ function findWithoutCriteria(spreadsheetName: string, sheetName: string) {
   return convertQueryResponseToDataArray(response);
 }
 
+function findWithCriteria(query: string, spreadsheetName: string, sheetName: string) {
+  const newToken = getToken();
+  const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
+
+  let request = "https://docs.google.com/spreadsheets/d/";
+  request += spreadSheetId;
+  request += "/gviz/tq?access_token=" + newToken;
+  request += "&select%20*%20 WHERE" + query;
+  request += "&sheet=" + sheetName;
+  request += "&tqx=reqId%3A0";
+
+  const response = UrlFetchApp.fetch(request).getContentText();
+  return convertQueryResponseToDataArray(response);
+}
+
 function convertQueryResponseToDataArray(responseText: string) {
   let jsonText = responseText.replace("google.visualization.Query.setResponse(", "");
   jsonText = jsonText.replace("/*O_o*/", "");
@@ -362,6 +377,8 @@ export function doGet() {
 global.foo = foo;
 // @ts-ignore
 global.findWithoutCriteria = findWithoutCriteria;
+// @ts-ignore
+global.findWithCriteria = findWithCriteria;
 // @ts-ignore
 global.updateManySheetRows = updateManySheetRows;
 // @ts-ignore

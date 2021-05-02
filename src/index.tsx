@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { StudentEntity } from "./app/entity/StudentEntity";
 import { EntityManager } from "./libs/entity/EntityManager";
-import { FacultyView } from "./app/components/menu/FacultyView";
 import { FacultyEntity } from "./app/entity/FacultyEntity";
 import { DepartmentEntity } from "./app/entity/DepartmentEntity";
 import { ProfessorEntity } from "./app/entity/Professor";
@@ -15,7 +14,12 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  return <FacultyView />;
+  FacultyEntity.findAll().then(result => {
+    console.log("WWW result", result);
+  });
+
+  return <>Test</>;
+  //return <FacultyView />;
 }
 
 function initEntityClasses() {

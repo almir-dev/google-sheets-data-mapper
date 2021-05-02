@@ -36,7 +36,6 @@ export function StudentTable() {
 
   React.useEffect(() => {
     StudentService.getAllStudents().then(result => {
-      console.log("WWW result from service", result);
       setStudents(result);
     });
   }, []);

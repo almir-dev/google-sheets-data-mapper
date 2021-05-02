@@ -34,7 +34,13 @@ export interface SheetManagerApi {
    */
   findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse>;
 
-  findByCriteria(searchQuery: string, sheet: string): Promise<GoogleQueryResponse>;
+  /**
+   * Searches all values from a sheet.
+   * @param query query string
+   * @param spreadSheetName spreadsheet name
+   * @param sheetName sheet name
+   */
+  findByCriteria(query: string, spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse>;
 
   /**
    * Creates a new row in a sheet.

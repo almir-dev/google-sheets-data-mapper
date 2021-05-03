@@ -6,7 +6,6 @@ export class ExtracurricularActivityEntity extends Dto {
   @PrimaryKey()
   @Column("A")
   id = "";
-
   @Column("B")
   name = "";
 }

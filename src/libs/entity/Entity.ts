@@ -3,16 +3,17 @@ import { ColumnProperties, EntityService } from "./EntityService";
 import {
   ColumnMetaData,
   getColumn,
-  getJoinColumn,
+  getOneToOneColumn,
   getOneToManyColumn,
   getPrimaryKey,
-  JoinColumnMetaData,
+  oneToOneColumnMetaData,
   OneToManyColumnMetaData
 } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
 import { UpdateOperation } from "../manager/SheetManagerApi";
+import {EntityFetchService} from "./read/EntityFetchService";
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -23,7 +24,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         super(...args);
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
-          const joinColumnKey: JoinColumnMetaData = getJoinColumn(this, key);
+          const joinColumnKey: oneToOneColumnMetaData = getOneToOneColumn(this, key);
           const oneToManyColumnKey: OneToManyColumnMetaData = getOneToManyColumn(this, key);
           const primaryKey: boolean = getPrimaryKey(this, key);
 
@@ -70,7 +71,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
 
       /** Finds all entities. */
       static async findAll(): Promise<T[]> {
-        return ((await EntityService.findEntities(spreadSheetName, tableName, entityName)) as unknown) as T[];
+        return ((await EntityFetchService.findEntities(spreadSheetName, tableName, entityName)) as unknown) as T[];
       }
 
       /**
@@ -79,7 +80,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        */
       static async find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return ((await EntityService.findEntitiesWithQuery(
+        return ((await EntityFetchService.findEntitiesWithQuery(
           spreadSheetName,
           tableName,
           entityName,

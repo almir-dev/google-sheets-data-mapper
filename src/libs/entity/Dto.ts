@@ -1,7 +1,7 @@
 import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
-const joinColumnMetadataKey = Symbol("joinColumn");
+const oneToOneColumnMetadataKey = Symbol("oneToOneColumn");
 const oneToManyMetadataKey = Symbol("oneToManyColumn");
 const primaryKeyMetadataKey = Symbol("primaryKey");
 
@@ -9,7 +9,7 @@ export interface ColumnMetaData {
   columnId: string;
 }
 
-export interface JoinColumnMetaData {
+export interface oneToOneColumnMetaData {
   columnId: string;
   referenceEntity: string;
 }
@@ -27,16 +27,16 @@ export function OneToMany(mappedBy: string, referenceEntity: string) {
   return Reflect.metadata(oneToManyMetadataKey, { mappedBy, referenceEntity });
 }
 
-export function JoinColumn(columnId: string, referenceEntity: string) {
-  return Reflect.metadata(joinColumnMetadataKey, { columnId, referenceEntity });
+export function OneToOneColumn(columnId: string, referenceEntity: string) {
+  return Reflect.metadata(oneToOneColumnMetadataKey, { columnId, referenceEntity });
 }
 
 export function getColumn(target: any, propertyKey: string) {
   return Reflect.getMetadata(columnMetadataKey, target, propertyKey);
 }
 
-export function getJoinColumn(target: any, propertyKey: string) {
-  return Reflect.getMetadata(joinColumnMetadataKey, target, propertyKey);
+export function getOneToOneColumn(target: any, propertyKey: string) {
+  return Reflect.getMetadata(oneToOneColumnMetadataKey, target, propertyKey);
 }
 
 export function getOneToManyColumn(target: any, propertyKey: string) {

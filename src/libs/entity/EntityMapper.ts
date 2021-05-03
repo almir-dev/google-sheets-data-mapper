@@ -1,5 +1,5 @@
 import { EntityManager } from "./EntityManager";
-import { ColumnMetaData, getColumn, getJoinColumn, getPrimaryKey, JoinColumnMetaData } from "./Dto";
+import { ColumnMetaData, getColumn, getOneToOneColumn, getPrimaryKey, oneToOneColumnMetaData } from "./Dto";
 import { GoogleQueryResponse } from "../manager/SheetManagerApi";
 
 type DataTable = google.visualization.DataTable;
@@ -73,7 +73,7 @@ class EntityMapperImpl {
 
     for (const key in target) {
       const columnKey: ColumnMetaData = getColumn(target, key);
-      const joinColumnKey: JoinColumnMetaData = getJoinColumn(target, key);
+      const joinColumnKey: oneToOneColumnMetaData = getOneToOneColumn(target, key);
       if (columnKey && columnKey.columnId) {
         fieldsMap[columnKey.columnId] = key;
       } else if (joinColumnKey) {

@@ -1,5 +1,5 @@
-import {getColumn, getOneToOneColumn} from "./Dto";
-import {UpdateOperation} from "../manager/SheetManagerApi";
+import { getColumn, getOneToOneColumn } from "./Dto";
+import { UpdateOperation } from "../manager/SheetManagerApi";
 
 export interface ColumnProperties {
   /** Id of the column (Capitalized Letter). */
@@ -78,7 +78,6 @@ class EntityServiceImpl {
     updateOperations.push(operation);
     return updateOperations;
   }
-
 }
 
 export const EntityService = new EntityServiceImpl();

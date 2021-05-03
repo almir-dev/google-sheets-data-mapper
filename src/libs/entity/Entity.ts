@@ -13,7 +13,7 @@ import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
 import { UpdateOperation } from "../manager/SheetManagerApi";
-import {EntityFetchService} from "./read/EntityFetchService";
+import { EntityFetchService } from "./read/EntityFetchService";
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -35,6 +35,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
             // @ts-ignore
             this[key] = joinColumnKey.columnId;
           } else if (oneToManyColumnKey) {
+            // TODO might not be needed
             // @ts-ignore
             this[key] = oneToManyColumnKey.columnId;
           }

@@ -14,7 +14,7 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  FacultyEntity.findAll().then(result => {
+  StudentEntity.findAll().then(result => {
     console.log("WWW result", result);
   });
 

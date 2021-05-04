@@ -14,7 +14,7 @@ class EntityFetchServiceImpl {
     const entityList = await this.findEntitiesWithoutReferences(spreadSheetName, tableName, entityName);
     if (entityList.length) {
       await OneToOneEntityService.fillOneToOneMappings(entityList);
-      await OneToManyEntityService.fillOneToManyMappings(entityList);
+      await OneToManyEntityService.fillOneToManyMappings(entityList, true);
     }
     return Promise.resolve(entityList);
   }

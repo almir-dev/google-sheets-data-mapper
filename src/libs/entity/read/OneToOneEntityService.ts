@@ -38,6 +38,8 @@ class OneToOneEntityServiceImpl {
     const entityName = targetClassObject.getName();
     Object.keys(targetClassObject).forEach(key => {
       const oneToOne = getOneToOneColumn(targetClassObject, key);
+      const oneToMany = getOneToManyColumn(targetClassObject, key);
+
       if (oneToOne) {
         const referenceKey = key + "-" + entityName;
         const targetReferenceMap = oneToOneMap[referenceKey];
@@ -47,6 +49,8 @@ class OneToOneEntityServiceImpl {
           this.fillReferencesForTargetObject(targetValue, oneToOneMap);
           targetClassObject[key] = targetValue;
         }
+      } else if (oneToMany) {
+        OneToManyEntityService.fillOneToManyMappings([targetClassObject], false);
       }
     });
   }

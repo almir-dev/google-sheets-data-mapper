@@ -1,5 +1,5 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto, OneToOneColumn, PrimaryKey } from "../../libs/entity/Dto";
+import { Column, Dto, ManyToOneColumn, PrimaryKey } from "../../libs/entity/Dto";
 
 @Entity("StudentsSpreadsheet", "ClassTable", "ClassEntity")
 export class ClassEntity extends Dto {
@@ -8,8 +8,8 @@ export class ClassEntity extends Dto {
   id = "";
   @Column("B")
   name = "";
-  @OneToOneColumn("C", "DepartmentEntity")
+  @ManyToOneColumn("C", "DepartmentEntity")
   department = {};
-  @OneToOneColumn("D", "ProfessorEntity")
+  @ManyToOneColumn("D", "ProfessorEntity")
   professor = {};
 }

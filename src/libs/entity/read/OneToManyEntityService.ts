@@ -1,8 +1,8 @@
-import { getOneToManyColumn, getOneToOneColumn } from "../Dto";
+import { getOneToManyColumn, getManyToOneColumn } from "../Dto";
 import { EntityManager } from "../EntityManager";
 import { EntityMap, EntityMapper } from "../EntityMapper";
 import { SheetManager } from "../../manager/SheetManager";
-import { OneToOneEntityService, OneToOneProps } from "./OneToOneEntityService";
+import { ManyToOneEntityService, ManyToOneProps } from "./ManyToOneEntityService";
 
 interface OneToManyProps {
   referenceEntity: string;
@@ -156,7 +156,7 @@ class OneToManyEntityServiceImpl {
     const pkColumnPropertyName = targetClassObject.getPrimaryKeyColumn().fieldPropertyName;
     Object.keys(targetClassObject).forEach(key => {
       const oneToMany: OneToManyProps = getOneToManyColumn(targetClassObject, key);
-      const oneToOne: OneToOneProps = getOneToOneColumn(targetClassObject, key);
+      const manyToOne: ManyToOneProps = getManyToOneColumn(targetClassObject, key);
       if (oneToMany) {
         const { mappedBy, referenceEntity } = oneToMany;
         const referenceKey = key + "-" + entityName;
@@ -169,8 +169,8 @@ class OneToManyEntityServiceImpl {
         }
       }
 
-      if (oneToOne && recursive) {
-        OneToOneEntityService.fillOneToOneMappings([targetClassObject]);
+      if (manyToOne && recursive) {
+        ManyToOneEntityService.fillManyToOneMappings([targetClassObject]);
       }
     });
   }

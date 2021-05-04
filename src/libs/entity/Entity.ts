@@ -3,7 +3,7 @@ import { ColumnProperties, EntityService } from "./EntityService";
 import {
   ColumnMetaData,
   getColumn,
-  getOneToOneColumn,
+  getManyToOneColumn,
   getOneToManyColumn,
   getPrimaryKey,
   oneToOneColumnMetaData,
@@ -24,7 +24,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         super(...args);
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
-          const joinColumnKey: oneToOneColumnMetaData = getOneToOneColumn(this, key);
+          const joinColumnKey: oneToOneColumnMetaData = getManyToOneColumn(this, key);
           const oneToManyColumnKey: OneToManyColumnMetaData = getOneToManyColumn(this, key);
           const primaryKey: boolean = getPrimaryKey(this, key);
 

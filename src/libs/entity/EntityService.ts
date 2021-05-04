@@ -1,4 +1,4 @@
-import { getColumn, getOneToOneColumn } from "./Dto";
+import { getColumn, getManyToOneColumn } from "./Dto";
 import { UpdateOperation } from "../manager/SheetManagerApi";
 
 export interface ColumnProperties {
@@ -20,7 +20,7 @@ class EntityServiceImpl {
     const propertyMap: { [index: string]: object } = {};
     for (const key of Object.keys(entry)) {
       const column = getColumn(entry, key);
-      const joinColumn = getOneToOneColumn(entry, key);
+      const joinColumn = getManyToOneColumn(entry, key);
 
       if (column) {
         propertyMap[column.columnId] = entry[key];
@@ -51,7 +51,7 @@ class EntityServiceImpl {
     const propertyMap: { [index: string]: object } = {};
 
     for (const key of Object.keys(entry)) {
-      const joinColumn = getOneToOneColumn(entry, key);
+      const joinColumn = getManyToOneColumn(entry, key);
       const column = getColumn(entry, key);
 
       if (column) {

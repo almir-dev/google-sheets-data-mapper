@@ -1,4 +1,4 @@
-import { OneToOneEntityService } from "./OneToOneEntityService";
+import { ManyToOneEntityService } from "./ManyToOneEntityService";
 import { SheetManager } from "../../manager/SheetManager";
 import { EntityMapper } from "../EntityMapper";
 import { OneToManyEntityService } from "./OneToManyEntityService";
@@ -13,7 +13,7 @@ class EntityFetchServiceImpl {
   async findEntities(spreadSheetName: string, tableName: string, entityName: string) {
     const entityList = await this.findEntitiesWithoutReferences(spreadSheetName, tableName, entityName);
     if (entityList.length) {
-      await OneToOneEntityService.fillOneToOneMappings(entityList);
+      await ManyToOneEntityService.fillManyToOneMappings(entityList);
       await OneToManyEntityService.fillOneToManyMappings(entityList, true);
     }
     return Promise.resolve(entityList);

@@ -1,7 +1,7 @@
 import { QueryOperation } from "../criteria/QueryOperation";
 
 const columnMetadataKey = Symbol("column");
-const oneToOneColumnMetadataKey = Symbol("oneToOneColumn");
+const manyToOneColumnMetadataKey = Symbol("manyToOneColumn");
 const oneToManyMetadataKey = Symbol("oneToManyColumn");
 const primaryKeyMetadataKey = Symbol("primaryKey");
 
@@ -27,16 +27,16 @@ export function OneToMany(mappedBy: string, referenceEntity: string) {
   return Reflect.metadata(oneToManyMetadataKey, { mappedBy, referenceEntity });
 }
 
-export function OneToOneColumn(columnId: string, referenceEntity: string) {
-  return Reflect.metadata(oneToOneColumnMetadataKey, { columnId, referenceEntity });
+export function ManyToOneColumn(columnId: string, referenceEntity: string) {
+  return Reflect.metadata(manyToOneColumnMetadataKey, { columnId, referenceEntity });
 }
 
 export function getColumn(target: any, propertyKey: string) {
   return Reflect.getMetadata(columnMetadataKey, target, propertyKey);
 }
 
-export function getOneToOneColumn(target: any, propertyKey: string) {
-  return Reflect.getMetadata(oneToOneColumnMetadataKey, target, propertyKey);
+export function getManyToOneColumn(target: any, propertyKey: string) {
+  return Reflect.getMetadata(manyToOneColumnMetadataKey, target, propertyKey);
 }
 
 export function getOneToManyColumn(target: any, propertyKey: string) {

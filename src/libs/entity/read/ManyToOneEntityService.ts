@@ -1,26 +1,26 @@
 import { EntityMap, EntityMapper } from "../EntityMapper";
 import { EntityManager } from "../EntityManager";
-import { getOneToManyColumn, getOneToOneColumn } from "../Dto";
+import { getOneToManyColumn, getManyToOneColumn } from "../Dto";
 import { SheetManager } from "../../manager/SheetManager";
 import { OneToManyEntityService } from "./OneToManyEntityService";
 
-export interface OneToOneProps {
+export interface ManyToOneProps {
   referenceEntity: string;
   propertyName: string;
 }
 
-class OneToOneEntityServiceImpl {
+class ManyToOneEntityServiceImpl {
   /**
-   * Goes through all OneToOne fields in the entity list, and assigns the corresponding values from google sheets to them.
+   * Goes through all @ManyToOne fields in the entity list, and assigns the corresponding values from google sheets to them.
    * @param entityList list of entities
    */
-  async fillOneToOneMappings(entityList: any[]) {
-    const oneToOnePropertyFields = this.getOneToOnePropertyFields(entityList[0]);
-    const oneToOneMap = await this.getOneToOneEntityMap(entityList[0]);
+  async fillManyToOneMappings(entityList: any[]) {
+    const manyToOnePropertyFields = this.getManyToOnePropertyFields(entityList[0]);
+    const manyToOneMap = await this.getManyToOneEntityMap(entityList[0]);
 
-    oneToOnePropertyFields.forEach(() => {
+    manyToOnePropertyFields.forEach(() => {
       entityList.forEach(entity => {
-        this.fillReferencesForTargetObject(entity, oneToOneMap);
+        this.fillReferencesForTargetObject(entity, manyToOneMap);
       });
     });
   }
@@ -37,7 +37,7 @@ class OneToOneEntityServiceImpl {
 
     const entityName = targetClassObject.getName();
     Object.keys(targetClassObject).forEach(key => {
-      const oneToOne = getOneToOneColumn(targetClassObject, key);
+      const oneToOne = getManyToOneColumn(targetClassObject, key);
       const oneToMany = getOneToManyColumn(targetClassObject, key);
 
       if (oneToOne) {
@@ -56,19 +56,19 @@ class OneToOneEntityServiceImpl {
   }
 
   /**
-   * Finds all property names of a class annotated with @OneToOne.
+   * Finds all property names of a class annotated with @ManyToOne.
    * @param targetClassObject target class object
    * @return list of property names
    */
-  private getOneToOnePropertyFields(targetClassObject: any): string[] {
-    const oneToOnePropertyNames: string[] = [];
+  private getManyToOnePropertyFields(targetClassObject: any): string[] {
+    const manyToOnePropertyNames: string[] = [];
     Object.keys(targetClassObject).forEach(key => {
-      if (getOneToOneColumn(targetClassObject, key)) {
-        oneToOnePropertyNames.push(key);
+      if (getManyToOneColumn(targetClassObject, key)) {
+        manyToOnePropertyNames.push(key);
       }
     });
 
-    return oneToOnePropertyNames;
+    return manyToOnePropertyNames;
   }
 
   /**
@@ -76,11 +76,11 @@ class OneToOneEntityServiceImpl {
    * map of its id-entity values.
    * @param targetClassObject target class object
    */
-  private getOneToOneEntityMap(targetClassObject: any): Promise<{ [key: string]: EntityMap<any> }> {
-    const oneToOneProperties: OneToOneProps[] = this.getOneToOneProps(targetClassObject.getName());
-    const oneToOneRequests = oneToOneProperties.map(props => this.getOneToOneEntities(props));
+  private getManyToOneEntityMap(targetClassObject: any): Promise<{ [key: string]: EntityMap<any> }> {
+    const manyToOneProperties: ManyToOneProps[] = this.getManyToOneProps(targetClassObject.getName());
+    const manyToOneRequests = manyToOneProperties.map(props => this.getManyToOneEntities(props));
 
-    return Promise.all(oneToOneRequests).then(result => {
+    return Promise.all(manyToOneRequests).then(result => {
       const finalMap: { [key: string]: EntityMap<any> } = {};
 
       result.forEach(e => {
@@ -93,40 +93,40 @@ class OneToOneEntityServiceImpl {
   }
 
   /**
-   * Recursively iterates over target class and finds all @OneToOne columns.
+   * Recursively iterates over target class and finds all @ManyToOne columns.
    * @param targetClassName target class object name
    * @return array of ReferenceEntityJoinProps
    */
-  private getOneToOneProps(targetClassName: string): OneToOneProps[] {
+  private getManyToOneProps(targetClassName: string): ManyToOneProps[] {
     if (!targetClassName) {
       return [];
     }
 
     const targetClassObject = new EntityManager.entityMap[targetClassName]();
 
-    const oneToOneFieldProperties: OneToOneProps[] = [];
+    const manyToOneFieldProperties: ManyToOneProps[] = [];
     Object.keys(targetClassObject).forEach(key => {
-      const oneToOneColumn = getOneToOneColumn(targetClassObject, key);
+      const manyToOneColumn = getManyToOneColumn(targetClassObject, key);
 
-      if (oneToOneColumn) {
+      if (manyToOneColumn) {
         const prop = { referenceEntity: targetClassName, propertyName: key };
-        const nestedProps = this.getOneToOneProps(oneToOneColumn.referenceEntity);
+        const nestedProps = this.getManyToOneProps(manyToOneColumn.referenceEntity);
 
-        oneToOneFieldProperties.push(...[prop, ...nestedProps]);
+        manyToOneFieldProperties.push(...[prop, ...nestedProps]);
       }
     });
 
-    return oneToOneFieldProperties;
+    return manyToOneFieldProperties;
   }
 
   /**
    * Finds all reference entries as a map, by the reference property of the target class object.
-   * @param oneToOneProps oneToOne props
+   * @param manyToOneProps manyToOne props
    */
-  private getOneToOneEntities(oneToOneProps: OneToOneProps) {
-    const { referenceEntity, propertyName } = oneToOneProps;
+  private getManyToOneEntities(manyToOneProps: ManyToOneProps) {
+    const { referenceEntity, propertyName } = manyToOneProps;
     const targetClassObject = new EntityManager.entityMap[referenceEntity]();
-    const referenceEntityName = OneToOneEntityServiceImpl.getReferenceEntityNameFromProperty(
+    const referenceEntityName = ManyToOneEntityServiceImpl.getReferenceEntityNameFromProperty(
       targetClassObject,
       propertyName
     );
@@ -150,7 +150,7 @@ class OneToOneEntityServiceImpl {
    * @param propertyName property name
    */
   private static getReferenceEntityNameFromProperty(targetClassObject: any, propertyName: string): string {
-    const column = getOneToOneColumn(targetClassObject, propertyName);
+    const column = getManyToOneColumn(targetClassObject, propertyName);
     return column.referenceEntity;
   }
 
@@ -173,4 +173,4 @@ class OneToOneEntityServiceImpl {
   }
 }
 
-export const OneToOneEntityService = new OneToOneEntityServiceImpl();
+export const ManyToOneEntityService = new ManyToOneEntityServiceImpl();

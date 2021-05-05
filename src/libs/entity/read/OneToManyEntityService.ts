@@ -14,13 +14,13 @@ class OneToManyEntityServiceImpl {
    * Goes through all OneToMany fields in the entity list, and assigns the corresponding values from google sheets to them.
    * @param entityList list of entities
    */
-  async fillOneToManyMappings(entityList: any[], recursive: boolean) {
+  async fillOneToManyMappings(entityList: any[]) {
     const oneToManyPropertyFields = this.getOneToOnePropertyFields(entityList[0]);
     const oneToOneMap = await this.getOneToManyEntityMap(entityList);
 
     oneToManyPropertyFields.forEach(() => {
       entityList.forEach(entity => {
-        this.fillReferencesForTargetObject(entity, oneToOneMap, recursive);
+        this.fillReferencesForTargetObject(entity, oneToOneMap);
       });
     });
   }
@@ -146,7 +146,6 @@ class OneToManyEntityServiceImpl {
   private fillReferencesForTargetObject(
     targetClassObject: any,
     oneToManyMap: { [key: string]: EntityMap<any>[] },
-    recursive: boolean
   ) {
     if (!targetClassObject) {
       return;
@@ -155,22 +154,26 @@ class OneToManyEntityServiceImpl {
     const entityName = targetClassObject.getName();
     const pkColumnPropertyName = targetClassObject.getPrimaryKeyColumn().fieldPropertyName;
     Object.keys(targetClassObject).forEach(key => {
-      const oneToMany: OneToManyProps = getOneToManyColumn(targetClassObject, key);
-      const manyToOne: ManyToOneProps = getManyToOneColumn(targetClassObject, key);
+      const oneToMany = getOneToManyColumn(targetClassObject, key);
+      const manyToOne = getManyToOneColumn(targetClassObject, key);
       if (oneToMany) {
-        const { mappedBy, referenceEntity } = oneToMany;
+        const { mappedBy } = oneToMany;
         const referenceKey = key + "-" + entityName;
         const targetReferenceMap = oneToManyMap[referenceKey];
         const pk = targetClassObject[pkColumnPropertyName];
         const targetValues = Object.values(targetReferenceMap).filter(e => e[mappedBy] === pk);
         if (targetValues) {
-          targetValues.forEach(v => this.fillReferencesForTargetObject(v, oneToManyMap, recursive));
+          targetValues.forEach(v => this.fillReferencesForTargetObject(v, oneToManyMap));
           targetClassObject[key] = targetValues;
         }
       }
 
-      if (manyToOne && recursive) {
-        ManyToOneEntityService.fillManyToOneMappings([targetClassObject]);
+
+      if (manyToOne) {
+        OneToManyEntityService.fillOneToManyMappings([targetClassObject]);
+        //here
+        //console.log('WWW manyToOneEntityService.fillManyToOneMappings', key);
+        //ManyToOneEntityService.fillManyToOneMappings([targetClassObject]);
       }
     });
   }

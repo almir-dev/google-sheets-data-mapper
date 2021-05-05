@@ -7,6 +7,7 @@ import { OneToManyEntityService } from "./OneToManyEntityService";
 export interface ManyToOneProps {
   referenceEntity: string;
   propertyName: string;
+  biDirectional?: boolean;
 }
 
 class ManyToOneEntityServiceImpl {
@@ -37,20 +38,25 @@ class ManyToOneEntityServiceImpl {
 
     const entityName = targetClassObject.getName();
     Object.keys(targetClassObject).forEach(key => {
-      const oneToOne = getManyToOneColumn(targetClassObject, key);
+      const manyToOne = getManyToOneColumn(targetClassObject, key);
       const oneToMany = getOneToManyColumn(targetClassObject, key);
 
-      if (oneToOne) {
+      //console.log('WWW interating', key, manyToOne, oneToMany);
+
+      if (manyToOne) {
         const referenceKey = key + "-" + entityName;
         const targetReferenceMap = oneToOneMap[referenceKey];
         const pk = targetClassObject[key];
         const targetValue = targetReferenceMap[pk];
         if (targetValue) {
           this.fillReferencesForTargetObject(targetValue, oneToOneMap);
+          //ManyToOneEntityService.fillManyToOneMappings([targetValue])
           targetClassObject[key] = targetValue;
         }
       } else if (oneToMany) {
-        OneToManyEntityService.fillOneToManyMappings([targetClassObject], false);
+        console.log('WWW found nested', oneToMany, targetClassObject);
+        ManyToOneEntityService.fillManyToOneMappings([targetClassObject]);
+        //OneToManyEntityService.fillOneToManyMappings([targetClassObject]);
       }
     });
   }

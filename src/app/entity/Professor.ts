@@ -12,8 +12,8 @@ export class ProfessorEntity extends Dto {
   name = "";
   @Column("C")
   address = "";
-  @ManyToOneColumn("D", "DepartmentEntity")
+  @ManyToOneColumn("D", "DepartmentEntity", true)
   department = ({} as unknown) as DepartmentEntity;
-  @ManyToOneColumn("E", "ExtracurricularActivityEntity")
+  @ManyToOneColumn("E", "ExtracurricularActivityEntity", true)
   eActivity = ({} as unknown) as ExtracurricularActivityEntity;
 }

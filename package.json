@@ -97,7 +97,7 @@
     "lint": "eslint src --ext .ts --ext .tsx",
     "setupGoo": "rimraf .clasp.json && clasp create --type webapp --title \"Diploma\" --rootDir ./dist",
     "cleanDist": "rm -rf ./dist/code.js && rm -rf ./dist/diploma.html",
-    "redeploy": "clasp deploy --description release --deploymentId AKfycbzH2HX-ZAxZI0cKK_VR2AUXANxgGDFfnYyKJFLQ4wkDivsabMYNB9KEMDQwg147JZIJ",
+    "redeploy": "clasp deploy --description release --deploymentId AKfycbyTqxLi3CV92WCoTN3hF85g3hJKuDm3xysR-D6d8gNSFP3bVo-0f2rnlsxAxQSVmLLx",
     "buildGoo": "cross-env NODE_ENV=production webpack",
     "deployGoo": "npm run cleanDist && npm run buildGoo && clasp push && npm run redeploy"
   },

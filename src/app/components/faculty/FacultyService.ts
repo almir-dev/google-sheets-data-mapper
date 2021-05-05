@@ -234,7 +234,7 @@ function createProfessor(id: string, name: string, address: string, department: 
 
   professor.id = id;
   professor.name = name;
-  professor.department = department;
+  //professor.department = department;
   professor.address = address;
 
   return professor;

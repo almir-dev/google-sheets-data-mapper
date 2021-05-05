@@ -9,26 +9,28 @@ export interface ColumnMetaData {
   columnId: string;
 }
 
-export interface oneToOneColumnMetaData {
+export interface ManyToOneColumnMetaData {
   columnId: string;
   referenceEntity: string;
+  biDirectional?: boolean;
 }
 
 export interface OneToManyColumnMetaData {
   columnId: string;
   referenceEntity: string;
+  biDirectional?: boolean
 }
 
 export function Column(columnId: string) {
   return Reflect.metadata(columnMetadataKey, { columnId });
 }
 
-export function OneToMany(mappedBy: string, referenceEntity: string) {
-  return Reflect.metadata(oneToManyMetadataKey, { mappedBy, referenceEntity });
+export function OneToMany(mappedBy: string, referenceEntity: string, biDirectional?: boolean) {
+  return Reflect.metadata(oneToManyMetadataKey, { mappedBy, referenceEntity, biDirectional });
 }
 
-export function ManyToOneColumn(columnId: string, referenceEntity: string) {
-  return Reflect.metadata(manyToOneColumnMetadataKey, { columnId, referenceEntity });
+export function ManyToOneColumn(columnId: string, referenceEntity: string, biDirectional?: boolean) {
+  return Reflect.metadata(manyToOneColumnMetadataKey, { columnId, referenceEntity, biDirectional });
 }
 
 export function getColumn(target: any, propertyKey: string) {

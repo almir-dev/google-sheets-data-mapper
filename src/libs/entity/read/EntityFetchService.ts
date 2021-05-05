@@ -13,8 +13,8 @@ class EntityFetchServiceImpl {
   async findEntities(spreadSheetName: string, tableName: string, entityName: string) {
     const entityList = await this.findEntitiesWithoutReferences(spreadSheetName, tableName, entityName);
     if (entityList.length) {
-      await ManyToOneEntityService.fillManyToOneMappings(entityList);
-      await OneToManyEntityService.fillOneToManyMappings(entityList, true);
+      // await ManyToOneEntityService.fillManyToOneMappings(entityList);
+      //await OneToManyEntityService.fillOneToManyMappings(entityList);
     }
     return Promise.resolve(entityList);
   }

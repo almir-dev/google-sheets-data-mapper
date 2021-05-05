@@ -6,7 +6,7 @@ import {
   getManyToOneColumn,
   getOneToManyColumn,
   getPrimaryKey,
-  oneToOneColumnMetaData,
+  ManyToOneColumnMetaData,
   OneToManyColumnMetaData
 } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
@@ -24,7 +24,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         super(...args);
         for (const key of Object.keys(this)) {
           const columnKey: ColumnMetaData = getColumn(this, key);
-          const joinColumnKey: oneToOneColumnMetaData = getManyToOneColumn(this, key);
+          const joinColumnKey: ManyToOneColumnMetaData = getManyToOneColumn(this, key);
           const oneToManyColumnKey: OneToManyColumnMetaData = getOneToManyColumn(this, key);
           const primaryKey: boolean = getPrimaryKey(this, key);
 

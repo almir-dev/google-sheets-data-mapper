@@ -1,5 +1,7 @@
 import { Entity } from "../../libs/entity/Entity";
 import { Column, Dto, ManyToOne, PrimaryKey } from "../../libs/entity/Dto";
+import { ProfessorEntity } from "./Professor";
+import { DepartmentEntity } from "./DepartmentEntity";
 
 @Entity("StudentsSpreadsheet", "ClassTable", "ClassEntity")
 export class ClassEntity extends Dto {
@@ -9,7 +11,7 @@ export class ClassEntity extends Dto {
   @Column("B")
   name = "";
   @ManyToOne("C", "DepartmentEntity")
-  department = {};
+  department: DepartmentEntity = ({} as unknown) as DepartmentEntity;
   @ManyToOne("D", "ProfessorEntity")
-  professor = {};
+  professor: ProfessorEntity = ({} as unknown) as ProfessorEntity;
 }

@@ -14,10 +14,6 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  ProfessorEntity.findAll().then(result => {
-    console.log("WWW result", result);
-  });
-
   return <>Test</>;
   //return <FacultyView />;
 }

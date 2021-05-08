@@ -48,7 +48,7 @@ class EntityFetchServiceImpl {
       return undefined;
     }
 
-    const filledReferenceEntity = { ...entity };
+    const filledReferenceEntity = Object.assign(Object.create(Object.getPrototypeOf(entity)), entity);
 
     Object.keys(entity).forEach(key => {
       const manyToOneColumn = getManyToOneColumn(entity, key);

@@ -14,6 +14,7 @@ import { QueryOperation } from "../criteria/QueryOperation";
 import { SheetManager } from "../manager/SheetManager";
 import { UpdateOperation } from "../manager/SheetManagerApi";
 import { EntityFetchService } from "./read/EntityFetchService";
+import { EntityCreateService } from "./write/EntityCreateService";
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -94,12 +95,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * @param entry entry
        */
       static create(entry: any): Promise<void> {
-        const values = EntityService.findValuesFromEntity(entry);
-        const pk = entry.getPrimaryKeyColumn();
-        const pkColumnName = pk.columnId;
-        const pkValue = entry[pk.fieldPropertyName];
-
-        return SheetManager.create(spreadSheetName, tableName, values, pkColumnName, pkValue);
+        return EntityCreateService.create(entry);
       }
 
       /**

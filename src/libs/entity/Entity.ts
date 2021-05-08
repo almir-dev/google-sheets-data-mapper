@@ -15,6 +15,7 @@ import { SheetManager } from "../manager/SheetManager";
 import { UpdateOperation } from "../manager/SheetManagerApi";
 import { EntityFetchService } from "./read/EntityFetchService";
 import { EntityCreateService } from "./write/EntityCreateService";
+import { EntityDeleteService } from "./write/EntityDeleteService";
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -103,9 +104,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * @param entry
        */
       static delete(entry: any): Promise<void> {
-        const pkColumnName = entry.getPrimaryKeyColumn().fieldPropertyName;
-        const pkValue = entry[pkColumnName];
-        return SheetManager.delete(spreadSheetName, tableName, pkColumnName, pkValue);
+        return EntityDeleteService.delete(entry);
       }
 
       /** Updates the entity. */

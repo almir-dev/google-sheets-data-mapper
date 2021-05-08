@@ -14,6 +14,15 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
+  StudentEntity.findAll<StudentEntity>().then(stundets => {
+    const c = stundets[0];
+    c.id = "moo";
+    c.name = "ASDADASD";
+    StudentEntity.create(c).then(() => {
+      StudentEntity.delete(c);
+    });
+  });
+
   return <>Test</>;
   //return <FacultyView />;
 }

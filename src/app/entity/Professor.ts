@@ -1,5 +1,5 @@
 import { Entity } from "../../libs/entity/Entity";
-import { Column, Dto, ManyToOneColumn, PrimaryKey } from "../../libs/entity/Dto";
+import { Column, Dto, ManyToOne, PrimaryKey } from "../../libs/entity/Dto";
 import { DepartmentEntity } from "./DepartmentEntity";
 import { ExtracurricularActivityEntity } from "./ExtracurricularActivityEntity";
 
@@ -12,8 +12,8 @@ export class ProfessorEntity extends Dto {
   name = "";
   @Column("C")
   address = "";
-  @ManyToOneColumn("D", "DepartmentEntity", true)
+  @ManyToOne("D", "DepartmentEntity")
   department = ({} as unknown) as DepartmentEntity;
-  @ManyToOneColumn("E", "ExtracurricularActivityEntity", true)
+  @ManyToOne("E", "ExtracurricularActivityEntity")
   eActivity = ({} as unknown) as ExtracurricularActivityEntity;
 }

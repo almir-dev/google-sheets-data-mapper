@@ -14,7 +14,7 @@ function AppContent() {
     initEntityClasses();
   }, []);
 
-  ExtracurricularActivityEntity.findAll().then(result => {
+  ProfessorEntity.findAll().then(result => {
     console.log("WWW result", result);
   });
 

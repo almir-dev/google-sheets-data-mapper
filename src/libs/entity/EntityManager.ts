@@ -3,7 +3,6 @@ class EntityManagerImpl {
 
   register<T>(entityName: string, entity: any) {
     this.entityMap[entityName] = entity;
-    console.log("registering entity", this.entityMap);
   }
 }
 

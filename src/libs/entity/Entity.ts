@@ -71,22 +71,22 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       }
 
       /** Finds all entities. */
-      static async findAll(): Promise<T[]> {
-        return ((await EntityFetchService.findEntities(spreadSheetName, tableName, entityName)) as unknown) as T[];
+      static findAll(): Promise<T[]> {
+        return (EntityFetchService.findEntities(spreadSheetName, tableName, entityName) as unknown) as Promise<T[]>;
       }
 
       /**
        * Finds entities matching the given criteria.
        * @param criteria criteria used for the search
        */
-      static async find(criteria: QueryOperation): Promise<T[]> {
+      static find(criteria: QueryOperation): Promise<T[]> {
         const query = CriteriaService.toQueryString(criteria);
-        return ((await EntityFetchService.findEntitiesWithQuery(
+        return (EntityFetchService.findEntitiesWithQuery(
           spreadSheetName,
           tableName,
           entityName,
           query
-        )) as unknown) as T[];
+        ) as unknown) as Promise<T[]>;
       }
 
       /**

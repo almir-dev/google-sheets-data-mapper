@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { ColumnProperties, EntityService } from "./EntityService";
 import {
   ColumnMetaData,
   getColumn,
@@ -11,11 +10,19 @@ import {
 } from "./Dto";
 import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
-import { SheetManager } from "../manager/SheetManager";
-import { UpdateOperation } from "../manager/SheetManagerApi";
 import { EntityFetchService } from "./read/EntityFetchService";
 import { EntityCreateService } from "./write/EntityCreateService";
 import { EntityDeleteService } from "./write/EntityDeleteService";
+import { EntityUpdateService } from "./write/EntityUpdateService";
+
+interface ColumnProperties {
+  /** Id of the column (Capitalized Letter). */
+  columnId: string;
+  /** Name of the property field. */
+  fieldPropertyName: string;
+  /** Name of the parent entity which is defining the column. */
+  referenceEntity: string;
+}
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -37,7 +44,6 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
             // @ts-ignore
             this[key] = joinColumnKey.columnId;
           } else if (oneToManyColumnKey) {
-            // TODO might not be needed
             // @ts-ignore
             this[key] = oneToManyColumnKey.columnId;
           }
@@ -108,20 +114,8 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       }
 
       /** Updates the entity. */
-      static update(entry: any): Promise<void> {
-        const updateOperations: UpdateOperation[] = EntityService.extractUpdateOperations(entry);
-        return SheetManager.update(updateOperations);
-      }
-
-      /** Updates a list of entries*/
-      // TODO can be optimized more
-      static updateMany(entryList: any[]): Promise<void> {
-        const updateOperations: UpdateOperation[] = [];
-        for (const entryListElement of entryList) {
-          updateOperations.push(...EntityService.extractUpdateOperations(entryListElement));
-        }
-
-        return SheetManager.update(updateOperations);
+      static update(entry: any | any[]): Promise<void> {
+        return EntityUpdateService.update(entry);
       }
     };
   };

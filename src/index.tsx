@@ -19,18 +19,24 @@ function AppContent() {
   //   console.log('WWW result', result[0].department.getSpreadsheetName());
   // })
 
-  ClassEntity.findAll<ClassEntity>().then(result => {
-    result[0].name = result[0].name + "almir1";
-    result[0].professor.name = result[0].professor.name + "mojo";
-    result[0].department.name = result[0].department.name + "jojo";
+  // ClassEntity.findAll<ClassEntity>().then(result => {
+  //   result[0].name = result[0].name + "almir1";
+  //   result[0].professor.name = result[0].professor.name + "mojo";
+  //   result[0].department.name = result[0].department.name + "jojo";
+  //
+  //   result[1].name = result[1].name + "almir2";
+  //   result[1].professor.name = result[1].professor.name + "mojo222";
+  //   result[1].department.name = result[1].department.name + "jojo222";
+  //
+  //   ClassEntity.update(result[0]);
+  // });
 
-    result[1].name = result[1].name + "almir2";
-    result[1].professor.name = result[1].professor.name + "mojo222";
-    result[1].department.name = result[1].department.name + "jojo222";
-
-    ClassEntity.update(result[0]);
+  ExtracurricularActivityEntity.findAll<ExtracurricularActivityEntity>().then(result => {
+    console.log("WWW EA", [...result]);
+    result[0].professors[0].name += "almir2";
+    result[0].name += "FOO";
+    ExtracurricularActivityEntity.update(result[0]);
   });
-
   return <>Test</>;
   //return <FacultyView />;
 }

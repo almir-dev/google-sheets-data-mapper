@@ -1,6 +1,6 @@
 import { UpdateOperation } from "../../manager/SheetManagerApi";
 import { SheetManager } from "../../manager/SheetManager";
-import { getColumn, getManyToOneColumn } from "../Dto";
+import { getColumn, getManyToOneColumn, getOneToManyColumn } from "../Dto";
 
 class EntityUpdateServiceImpl {
   /**
@@ -33,11 +33,9 @@ class EntityUpdateServiceImpl {
    * Updates a single entity
    * @param entity entity
    */
-  private updateSingle(entity: any) {
+  private updateSingle(entity: any): Promise<void> {
     const updateOperations: UpdateOperation[] = this.extractUpdateOperations(entity);
-    console.log("WWW operations", updateOperations);
-    return Promise.resolve();
-    //return SheetManager.update(updateOperations);
+    return SheetManager.update(updateOperations);
   }
 
   /**
@@ -48,6 +46,14 @@ class EntityUpdateServiceImpl {
     if (!entry) {
       return [];
     }
+
+    // This is a hack, but a feature as well.
+    // It prevents bi-directional recursive operation nesting, because for some reason the nested
+    // bi-directional entries do not have entity methods.
+    if (!entry.getSpreadsheetName) {
+      return [];
+    }
+
     const updateOperations: UpdateOperation[] = [];
 
     const spreadSheetName = entry.getSpreadsheetName();
@@ -61,19 +67,24 @@ class EntityUpdateServiceImpl {
 
     for (const key of Object.keys(entry)) {
       const manyToOneColumn = getManyToOneColumn(entry, key);
+      const oneToManyColumn = getOneToManyColumn(entry, key);
       const column = getColumn(entry, key);
 
       if (column) {
         propertyMap[column.columnId] = entry[key];
       } else if (manyToOneColumn) {
-        const nestedOperation = this.extractUpdateOperations(entry[key]);
-        updateOperations.push(...nestedOperation);
+        // Again the hack, nested bi-directional entries do not have entity functions.
+        if (entry[key].getPrimaryKeyColumn) {
+          const nestedOperation = this.extractUpdateOperations(entry[key]);
+          updateOperations.push(...nestedOperation);
 
-        const pkFieldPropertyName = entry[key].getPrimaryKeyColumn().fieldPropertyName;
-        propertyMap[manyToOneColumn.columnId] = entry[key][pkFieldPropertyName];
+          const pkFieldPropertyName = entry[key].getPrimaryKeyColumn().fieldPropertyName;
+          propertyMap[manyToOneColumn.columnId] = entry[key][pkFieldPropertyName];
+        }
+      } else if (oneToManyColumn) {
+        // ignored for now
       }
     }
-
     const sortedColumnIds = Object.keys(propertyMap).sort();
     const values = sortedColumnIds.map(id => propertyMap[id]);
 

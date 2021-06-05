@@ -56,6 +56,10 @@ export class Dto<T> {
     return Promise.resolve(({} as unknown) as T);
   }
 
+  save(): Promise<void> {
+    return Promise.resolve();
+  }
+
   static getName() {
     return "";
   }

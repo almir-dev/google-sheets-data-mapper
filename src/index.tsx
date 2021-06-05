@@ -23,11 +23,8 @@ function AppContent() {
 function App() {
   StudentEntity.findById<StudentEntity>("id15").then(result => {
     console.log("WWW result", result);
-    setTimeout(() => {
-      result.refresh().then(bar => {
-        console.log("WWW refreshed", bar);
-      });
-    }, 5000);
+    result.name = "Jack22";
+    result.save();
   });
   return <FacultyView />;
 }

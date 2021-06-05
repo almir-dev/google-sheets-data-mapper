@@ -107,6 +107,13 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         });
       }
 
+      /**
+       * Saves the current entity into google sheets.
+       */
+      save(): Promise<void> {
+        return EntityUpdateService.update(this);
+      }
+
       /** Finds all entities. */
       static findAll(): Promise<T[]> {
         return (EntityFetchService.findEntities(spreadSheetName, tableName, entityName) as unknown) as Promise<T[]>;

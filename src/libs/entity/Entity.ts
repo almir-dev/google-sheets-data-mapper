@@ -8,12 +8,12 @@ import {
   ManyToOneColumnMetaData,
   OneToManyColumnMetaData
 } from "./Dto";
-import { CriteriaService } from "../criteria/CriteriaService";
 import { QueryOperation } from "../criteria/QueryOperation";
 import { EntityFetchService } from "./read/EntityFetchService";
 import { EntityCreateService } from "./write/EntityCreateService";
 import { EntityDeleteService } from "./write/EntityDeleteService";
 import { EntityUpdateService } from "./write/EntityUpdateService";
+import { CriteriaService } from "../criteria/CriteriaService";
 
 interface ColumnProperties {
   /** Id of the column (Capitalized Letter). */
@@ -83,16 +83,22 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
         return (EntityFetchService.findEntities(spreadSheetName, tableName, entityName) as unknown) as Promise<T[]>;
       }
 
+      /** Finds entity by id. */
+      static findById(id: string): Promise<T> {
+        return (EntityFetchService.findEntityById(spreadSheetName, tableName, entityName, id) as unknown) as Promise<T>;
+      }
+
       /**
        * Finds entities matching the given criteria.
        * @param criteria criteria used for the search
        */
       static find(criteria: QueryOperation): Promise<T[]> {
+        const queryString = CriteriaService.toQueryString(criteria);
         return (EntityFetchService.findEntitiesWithQuery(
           spreadSheetName,
           tableName,
           entityName,
-          criteria
+          queryString
         ) as unknown) as Promise<T[]>;
       }
 

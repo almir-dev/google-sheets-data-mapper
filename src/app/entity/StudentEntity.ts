@@ -17,3 +17,5 @@ export class StudentEntity extends Dto {
   @ManyToOne("F", "ExtracurricularActivityEntity")
   eActivity = {};
 }
+
+export const StudentInstance = new StudentEntity();

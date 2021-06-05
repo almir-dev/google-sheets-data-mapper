@@ -2,9 +2,6 @@ import { SheetManager } from "../../manager/SheetManager";
 import { EntityMapper } from "../EntityMapper";
 import { getManyToOneColumn, getOneToManyColumn } from "../Dto";
 import { EntityManager } from "../EntityManager";
-import { QueryOperation } from "../../criteria/QueryOperation";
-import { createInflateRaw } from "zlib";
-import { CriteriaService } from "../../criteria/CriteriaService";
 
 interface EntityContextValue {
   result: any[];
@@ -47,35 +44,53 @@ class EntityFetchServiceImpl {
   }
 
   /**
+   * Find the first entity with the given id.
+   * @param spreadsheetName spreadsheet name
+   * @param tableName sheet name
+   * @param entityName entity name
+   * @param id id of the entity
+   */
+  findEntityById<T>(spreadsheetName: string, tableName: string, entityName: string, id: string): Promise<T> {
+    const targetClassObject = new EntityManager.entityMap[entityName]();
+    const pkField = targetClassObject.getPrimaryKeyColumn().fieldPropertyName;
+    const source = targetClassObject[pkField];
+
+    const query = `${source}='${id}'`;
+    return this.findEntitiesWithQuery<T>(spreadsheetName, tableName, entityName, query)
+      .then(result => {
+        return Promise.resolve(result[0]);
+      })
+      .catch(error => {
+        console.log("Failed to find entity with id of", id);
+        return Promise.reject();
+      });
+  }
+
+  /**
    * Finds all entities and all their referenced children, by given query.
    * @param spreadSheetName spreadsheet name
    * @param tableName table name
    * @param entityName entity name
-   * @param criteria criteria operations
+   * @param query query string
    */
   findEntitiesWithQuery<T>(
     spreadSheetName: string,
     tableName: string,
     entityName: string,
-    criteria: QueryOperation
+    query: string
   ): Promise<any[]> {
-    const sheetQuery = CriteriaService.toSheetQuery(criteria);
-
-    return this.findEntitiesWithoutReferencesWithQuery(
-      sheetQuery[0].query,
-      spreadSheetName,
-      tableName,
-      entityName
-    ).then(entityList => {
-      return this.createEntityContext(entityList).then(context => {
-        const updatedEntityList: any[] = [];
-        entityList.forEach(entity => {
-          const updatedEntity = this.getFilledReferenceEntity(entity, context);
-          updatedEntityList.push(updatedEntity);
+    return this.findEntitiesWithoutReferencesWithQuery(query, spreadSheetName, tableName, entityName).then(
+      entityList => {
+        return this.createEntityContext(entityList).then(context => {
+          const updatedEntityList: any[] = [];
+          entityList.forEach(entity => {
+            const updatedEntity = this.getFilledReferenceEntity(entity, context);
+            updatedEntityList.push(updatedEntity);
+          });
+          return Promise.resolve(updatedEntityList);
         });
-        return Promise.resolve(updatedEntityList);
-      });
-    });
+      }
+    );
   }
 
   private getFilledReferenceEntity(entity: any, context: EntityContext, previousContext?: PreviousContext): any {

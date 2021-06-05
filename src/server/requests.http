@@ -9,3 +9,9 @@ GET https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvL
 GET https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/gviz/tq
  ?access_token=ya29.a0AfH6SMB-kCiMt4-rRdyCctC4TFznqNAIjoLkAXDZlnIGHBz2FTRz090w-exSGQsar3AlBQwLzS0-SYpF3P9DekRzC1yWMsl9aYBJmFHXu0yjOH9f50Z1i9H6WCpKZvVYBgj_72SZAkjjv8Y8zWa45yV7Xp8YKQqYq4g0oRZp
  &tq=select%20*%20where%20B%20%3D%20%27Stacy%27&sheet=StudentTable&tqx=reqId%3A0
+
+
+###
+GET https://docs.google.com/spreadsheets/d/1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A/gviz/tq
+ ?access_token=ya29.a0AfH6SMDwom8eyMhtuahxiokFuOHLN14CRserDobe0JN0C3lNiuemL30iT0Quibt7ID7mJuz3gBYIKZ9YWcj-JFNSLKjvwDmuj7AeQrqFtKcRcCLsFYsSA2wLXpcGPI8DNux39A--CFDAtykMQVuVH1CaAhf6EuAN6okFEsdEFA
+ &tq=select%20*%20 WHERE A = 'id1'&sheet=StudentTable&tqx=reqId%3A0

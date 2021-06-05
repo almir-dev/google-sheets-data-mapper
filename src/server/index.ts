@@ -343,7 +343,7 @@ function findWithCriteria(query: string, spreadsheetName: string, sheetName: str
   let request = "https://docs.google.com/spreadsheets/d/";
   request += spreadSheetId;
   request += "/gviz/tq?access_token=" + newToken;
-  request += "&tq=select%20*%20 WHERE" + query;
+  request += "&tq=select%20*%20 WHERE " + query;
   request += "&sheet=" + sheetName;
   request += "&tqx=reqId%3A0";
 

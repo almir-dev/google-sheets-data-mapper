@@ -17,12 +17,14 @@ function AppContent() {
     setReady(initEntityClasses());
   }, []);
 
-  StudentEntity.getName();
-
   return ready ? <App /> : null;
 }
 
 function App() {
+  StudentEntity.findById<StudentEntity>("id1").then(result => {
+    console.log("WWW res", result);
+  });
+
   return <FacultyView />;
 }
 

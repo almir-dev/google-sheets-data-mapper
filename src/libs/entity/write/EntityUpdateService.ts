@@ -61,7 +61,8 @@ class EntityUpdateServiceImpl {
     const lookupColumnName = entry.getPrimaryKeyColumn().columnId;
 
     const lookupValueFieldPropertyName = entry.getPrimaryKeyColumn().fieldPropertyName;
-    const lookupValue = entry[lookupValueFieldPropertyName];
+    //const lookupValue = entry[lookupValueFieldPropertyName];
+    const lookupValue = entry.getLastPkValue();
 
     const propertyMap: { [index: string]: object } = {};
 

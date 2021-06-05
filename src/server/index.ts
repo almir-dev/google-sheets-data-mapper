@@ -65,9 +65,9 @@ function updateManySheetRows(updateOperations: UpdateOperation[]) {
   let backupData;
   try {
     backupData = createBackupSheetRowData(updateOperations, sheetMap);
-  } catch {
+  } catch (error) {
     unlockSheetList(sheetList);
-    return;
+    throw new Error("Failed to create backup " + error);
   }
 
   for (const operation of updateOperations) {
@@ -124,7 +124,7 @@ function createBackupSheetRowData(updateOperations: UpdateOperation[], sheetMap:
  * @param lookupValue lookup value
  */
 function getExistingSheetRow(sheet: Sheet, lookupColumnName: string, lookupValue: object): SheetRowData {
-  const columnNumber = getColumnNumberByName(sheet, (lookupColumnName as unknown) as object);
+  const columnNumber = letterToColumn(lookupColumnName);
   const rowNumber = getRowNumberByLookupValue(sheet, columnNumber, lookupValue);
   const range = rowNumber + ":" + rowNumber;
   const values = sheet.getRange(rowNumber + ":" + rowNumber).getValues()[0];
@@ -138,7 +138,7 @@ function getExistingSheetRow(sheet: Sheet, lookupColumnName: string, lookupValue
  * @param updateValue values to update the row
  */
 function updateSingleSheetRow(sheet: Sheet, lookupColumnName: string, updateValue: UpdateValue) {
-  const columnNumber = getColumnNumberByName(sheet, (lookupColumnName as unknown) as object);
+  const columnNumber = letterToColumn(lookupColumnName);
   const rowNumber = getRowNumberByLookupValue(sheet, columnNumber, updateValue.lookupValue);
   sheet.getRange(rowNumber + ":" + rowNumber).setValues([updateValue.values]);
 }
@@ -156,7 +156,7 @@ function deleteSheetRow(spreadSheetName: string, sheetName: string, lookupColumn
 
   lockSheet(sheet);
 
-  const columnNumber = getColumnNumberByName(sheet, (lookupColumnName as unknown) as object);
+  const columnNumber = letterToColumn(lookupColumnName);
   const rowToDelete = getRowNumberByLookupValue(sheet, columnNumber, lookupValue);
   sheet.deleteRow(rowToDelete);
 
@@ -269,21 +269,16 @@ function hasDuplicate(sheet: Sheet, lookupColumnName: string, lookupValue: objec
 
 /**
  * Retrieves the number of the column based on the column name.
- * @param sheet sheet
  * @param columnName name of the column
  * @return column number
  */
-function getColumnNumberByName(sheet: Sheet, columnName: object) {
-  const headers = sheet
-    .getDataRange()
-    .getValues()
-    .shift();
-  if (headers) {
-    const colIndex = headers.indexOf(columnName);
-    return colIndex + 1;
+function letterToColumn(columnName: string) {
+  let column = 0;
+  let length = columnName.length;
+  for (let i = 0; i < length; i++) {
+    column += (columnName.charCodeAt(i) - 64) * Math.pow(26, length - i - 1);
   }
-
-  return -1;
+  return column - 1;
 }
 
 /**
@@ -369,8 +364,6 @@ export function doGet() {
 
 // Expose public functions by attaching to `global`
 
-// @ts-ignore
-global.foo = foo;
 // @ts-ignore
 global.findWithoutCriteria = findWithoutCriteria;
 // @ts-ignore

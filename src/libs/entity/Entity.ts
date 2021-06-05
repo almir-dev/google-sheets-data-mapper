@@ -22,6 +22,8 @@ interface ColumnProperties {
   fieldPropertyName: string;
   /** Name of the parent entity which is defining the column. */
   referenceEntity: string;
+  /** Last known fetched values*/
+  lastValue?: any;
 }
 
 export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
@@ -52,7 +54,9 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
             this.primaryKeyColumn = {
               columnId: columnKey.columnId,
               fieldPropertyName: key,
-              referenceEntity: "NOT-DEFINED"
+              referenceEntity: "NOT-DEFINED",
+              // @ts-ignore
+              lastValue: this[key]
             };
           }
         }
@@ -76,6 +80,16 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       /** Returns the meta information of the tables primary key.*/
       getPrimaryKeyColumn() {
         return this.primaryKeyColumn;
+      }
+
+      /** Sets the lastValue of the pk. */
+      setPkValue(value: any) {
+        this.primaryKeyColumn.lastValue = value;
+      }
+
+      /** Sets the lastValue of the pk. */
+      getLastPkValue(): any {
+        return this.primaryKeyColumn.lastValue;
       }
 
       /** Finds all entities. */

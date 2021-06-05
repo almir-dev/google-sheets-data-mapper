@@ -21,8 +21,14 @@ function AppContent() {
 }
 
 function App() {
-  StudentEntity.findById<StudentEntity>("id1").then(result => {
+  StudentEntity.findById<StudentEntity>("id15").then(result => {
     console.log("WWW res", result);
+    result.name = "JackUpdated";
+    result.gender = "MaleUpdated";
+    result.contactInfo.city = "RichmondV2";
+    StudentEntity.update(result).then(f => {
+      console.log("WWW Update done");
+    });
   });
 
   return <FacultyView />;

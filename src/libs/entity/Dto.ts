@@ -60,8 +60,8 @@ export class Dto {
     return Promise.resolve([]);
   }
 
-  static findById<T>(id: string): Promise<T[]> {
-    return Promise.resolve([]);
+  static findById<T>(id: string): Promise<T> {
+    return Promise.resolve(({} as unknown) as T);
   }
 
   static find<T>(criteria: QueryOperation): Promise<T[]> {

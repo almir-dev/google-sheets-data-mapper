@@ -70,14 +70,19 @@ class EntityMapperImpl {
 
   private createEntityObject<T>(target: any, row: any[]): T {
     const fieldsMap: { [key: string]: string } = {};
-
+    let pkColumnField;
     for (const key in target) {
       const columnKey: ColumnMetaData = getColumn(target, key);
       const joinColumnKey: ManyToOneColumnMetaData = getManyToOneColumn(target, key);
+      const pkColumnKey = getPrimaryKey(target, key);
       if (columnKey && columnKey.columnId) {
         fieldsMap[columnKey.columnId] = key;
       } else if (joinColumnKey) {
         fieldsMap[joinColumnKey.columnId] = key;
+      }
+
+      if (pkColumnKey) {
+        pkColumnField = key;
       }
     }
 
@@ -87,6 +92,8 @@ class EntityMapperImpl {
       target[fieldsMap[columnName]] = row[index];
     });
 
+    // @ts-ignore
+    target.setPkValue(target[pkColumnField]);
     return target;
   }
 

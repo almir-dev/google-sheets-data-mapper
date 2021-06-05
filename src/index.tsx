@@ -8,40 +8,25 @@ import { ProfessorEntity } from "./app/entity/Professor";
 import { ClassEntity } from "./app/entity/ClassEntity";
 import { ContactInfoEntity } from "./app/entity/ContactInfoEntity";
 import { ExtracurricularActivityEntity } from "./app/entity/ExtracurricularActivityEntity";
+import { FacultyView } from "./app/components/menu/FacultyView";
 
 function AppContent() {
+  const [ready, setReady] = React.useState<boolean>(false);
+
   React.useEffect(() => {
-    initEntityClasses();
+    setReady(initEntityClasses());
   }, []);
 
-  // ClassEntity.findAll<any>().then(result => {
-  //   console.log('WWW result', result[0].getSpreadsheetName());
-  //   console.log('WWW result', result[0].department.getSpreadsheetName());
-  // })
+  StudentEntity.getName();
 
-  // ClassEntity.findAll<ClassEntity>().then(result => {
-  //   result[0].name = result[0].name + "almir1";
-  //   result[0].professor.name = result[0].professor.name + "mojo";
-  //   result[0].department.name = result[0].department.name + "jojo";
-  //
-  //   result[1].name = result[1].name + "almir2";
-  //   result[1].professor.name = result[1].professor.name + "mojo222";
-  //   result[1].department.name = result[1].department.name + "jojo222";
-  //
-  //   ClassEntity.update(result[0]);
-  // });
-
-  ExtracurricularActivityEntity.findAll<ExtracurricularActivityEntity>().then(result => {
-    console.log("WWW EA", [...result]);
-    result[0].professors[0].name += "almir2";
-    result[0].name += "FOO";
-    ExtracurricularActivityEntity.update(result[0]);
-  });
-  return <>Test</>;
-  //return <FacultyView />;
+  return ready ? <App /> : null;
 }
 
-function initEntityClasses() {
+function App() {
+  return <FacultyView />;
+}
+
+function initEntityClasses(): boolean {
   EntityManager.register("FacultyEntity", FacultyEntity);
   EntityManager.register("DepartmentEntity", DepartmentEntity);
   EntityManager.register("ProfessorEntity", ProfessorEntity);
@@ -49,6 +34,7 @@ function initEntityClasses() {
   EntityManager.register("StudentEntity", StudentEntity);
   EntityManager.register("ContactInfoEntity", ContactInfoEntity);
   EntityManager.register("ExtracurricularActivityEntity", ExtracurricularActivityEntity);
+  return true;
 }
 
 ReactDOM.render(<AppContent />, document.getElementById("root"));

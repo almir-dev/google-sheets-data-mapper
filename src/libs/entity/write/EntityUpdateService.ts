@@ -47,7 +47,7 @@ class EntityUpdateServiceImpl {
       return [];
     }
 
-    // This is a hack, but a feature as well.
+    // This is a bug, but a feature as well.
     // It prevents bi-directional recursive operation nesting, because for some reason the nested
     // bi-directional entries do not have entity methods.
     if (!entry.getSpreadsheetName) {

@@ -88,12 +88,11 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * @param criteria criteria used for the search
        */
       static find(criteria: QueryOperation): Promise<T[]> {
-        const query = CriteriaService.toQueryString(criteria);
         return (EntityFetchService.findEntitiesWithQuery(
           spreadSheetName,
           tableName,
           entityName,
-          query
+          criteria
         ) as unknown) as Promise<T[]>;
       }
 

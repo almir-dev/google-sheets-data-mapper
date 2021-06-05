@@ -1,4 +1,16 @@
-import { QueryOperation, SingleQueryOperation, PluralQueryOperation } from "./QueryOperation";
+import { PluralQueryOperation, QueryOperation, SingleQueryOperation } from "./QueryOperation";
+
+interface SheetQuery {
+  spreadsheetName: string;
+  sheetName: string;
+  query: string;
+}
+
+interface EntityMeta {
+  spreadsheetName: string;
+  sheetName: string;
+  columnId: string;
+}
 
 class CriteriaServiceImpl {
   toQueryString(criteria: QueryOperation) {
@@ -7,6 +19,18 @@ class CriteriaServiceImpl {
     }
 
     return this.pluralOperationToQueryString(criteria);
+  }
+
+  toSheetQuery(criteria: QueryOperation): SheetQuery[] {
+    return [];
+  }
+
+  private isPrimitive(input: string): boolean {
+    const isString = input === "string";
+    const isNumber = input === "number";
+    const isDate = input === "date";
+
+    return isString || isNumber || isDate;
   }
 
   private singleOperationToQueryString(operation: SingleQueryOperation) {

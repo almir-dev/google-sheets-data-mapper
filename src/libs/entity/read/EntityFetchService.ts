@@ -2,6 +2,9 @@ import { SheetManager } from "../../manager/SheetManager";
 import { EntityMapper } from "../EntityMapper";
 import { getManyToOneColumn, getOneToManyColumn } from "../Dto";
 import { EntityManager } from "../EntityManager";
+import { QueryOperation } from "../../criteria/QueryOperation";
+import { createInflateRaw } from "zlib";
+import { CriteriaService } from "../../criteria/CriteriaService";
 
 interface EntityContextValue {
   result: any[];
@@ -32,6 +35,38 @@ class EntityFetchServiceImpl {
    */
   findEntities(spreadSheetName: string, tableName: string, entityName: string): Promise<any[]> {
     return this.findEntitiesWithoutReferences(spreadSheetName, tableName, entityName).then(entityList => {
+      return this.createEntityContext(entityList).then(context => {
+        const updatedEntityList: any[] = [];
+        entityList.forEach(entity => {
+          const updatedEntity = this.getFilledReferenceEntity(entity, context);
+          updatedEntityList.push(updatedEntity);
+        });
+        return Promise.resolve(updatedEntityList);
+      });
+    });
+  }
+
+  /**
+   * Finds all entities and all their referenced children, by given query.
+   * @param spreadSheetName spreadsheet name
+   * @param tableName table name
+   * @param entityName entity name
+   * @param criteria criteria operations
+   */
+  findEntitiesWithQuery<T>(
+    spreadSheetName: string,
+    tableName: string,
+    entityName: string,
+    criteria: QueryOperation
+  ): Promise<any[]> {
+    const sheetQuery = CriteriaService.toSheetQuery(criteria);
+
+    return this.findEntitiesWithoutReferencesWithQuery(
+      sheetQuery[0].query,
+      spreadSheetName,
+      tableName,
+      entityName
+    ).then(entityList => {
       return this.createEntityContext(entityList).then(context => {
         const updatedEntityList: any[] = [];
         entityList.forEach(entity => {
@@ -185,18 +220,6 @@ class EntityFetchServiceImpl {
     return initProps;
   }
 
-  /**
-   * Finds all entities and all their referenced children, by given query.
-   * @param tableName table name
-   * @param entityName entity name
-   * @param query query string
-   */
-  findEntitiesWithQuery(spreadSheetName: string, tableName: string, entityName: string, query: string) {
-    return this.findEntitiesWithoutReferencesByQuery(query, spreadSheetName, tableName, entityName).then(entityList => {
-      return Promise.resolve(entityList);
-    });
-  }
-
   /***
    * Finds all entities for the given table name and entity name, without touching reference fields.
    * @param spreadSheetName name of the spreadSheet
@@ -221,23 +244,28 @@ class EntityFetchServiceImpl {
   }
 
   /***
-   * Finds all entities for the given table name and entity name, without touching reference fields.
+   * Finds all entities for the given table name and entity name and query, without touching reference fields.
+   * @param query query string
+   * @param spreadSheetName name of the spreadSheet
    * @param tableName name of the table corresponding to the entity
    * @param entityName name of the entity
-   * @param query search query
    * @return promise of list of entities
    */
-  private findEntitiesWithoutReferencesByQuery<T>(
-    spreadsheetName: string,
+  private findEntitiesWithoutReferencesWithQuery<T>(
+    query: string,
+    spreadSheetName: string,
     tableName: string,
-    entityName: string,
-    query: string
+    entityName: string
   ): Promise<T[]> {
-    return SheetManager.findByCriteria(query, spreadsheetName, tableName).then(googleQueryResponse => {
-      const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
-
-      return Promise.resolve(entityObjectList);
-    });
+    return SheetManager.findByCriteria(query, spreadSheetName, tableName)
+      .then(googleQueryResponse => {
+        const entityObjectList: T[] = EntityMapper.toEntityObjects(googleQueryResponse, entityName);
+        return Promise.resolve(entityObjectList);
+      })
+      .catch(error => {
+        console.log("Failed to findEntitiesWithoutReferences ", error);
+        return Promise.reject();
+      });
   }
 }
 

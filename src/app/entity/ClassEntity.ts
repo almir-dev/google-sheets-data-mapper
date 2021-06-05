@@ -4,7 +4,7 @@ import { ProfessorEntity } from "./Professor";
 import { DepartmentEntity } from "./DepartmentEntity";
 
 @Entity("StudentsSpreadsheet", "ClassTable", "ClassEntity")
-export class ClassEntity extends Dto {
+export class ClassEntity extends Dto<ClassEntity> {
   @PrimaryKey()
   @Column("A")
   id = "";

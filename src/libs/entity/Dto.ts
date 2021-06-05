@@ -51,7 +51,11 @@ export function getPrimaryKey(target: any, propertyKey: string) {
   return Reflect.getMetadata(primaryKeyMetadataKey, target, propertyKey);
 }
 
-export class Dto {
+export class Dto<T> {
+  refresh(): Promise<T> {
+    return Promise.resolve(({} as unknown) as T);
+  }
+
   static getName() {
     return "";
   }

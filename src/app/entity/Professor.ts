@@ -4,7 +4,7 @@ import { DepartmentEntity } from "./DepartmentEntity";
 import { ExtracurricularActivityEntity } from "./ExtracurricularActivityEntity";
 
 @Entity("StudentsSpreadsheet", "ProfessorTable", "ProfessorEntity")
-export class ProfessorEntity extends Dto {
+export class ProfessorEntity extends Dto<ProfessorEntity> {
   @PrimaryKey()
   @Column("A")
   id = "";
@@ -16,4 +16,6 @@ export class ProfessorEntity extends Dto {
   department = ({} as unknown) as DepartmentEntity;
   @ManyToOne("E", "ExtracurricularActivityEntity")
   eActivity = ({} as unknown) as ExtracurricularActivityEntity;
+  @Column("F")
+  age = 0;
 }

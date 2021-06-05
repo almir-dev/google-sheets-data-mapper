@@ -14,6 +14,7 @@ import { EntityCreateService } from "./write/EntityCreateService";
 import { EntityDeleteService } from "./write/EntityDeleteService";
 import { EntityUpdateService } from "./write/EntityUpdateService";
 import { CriteriaService } from "../criteria/CriteriaService";
+import { findAllInRenderedTree } from "react-dom/test-utils";
 
 interface ColumnProperties {
   /** Id of the column (Capitalized Letter). */
@@ -90,6 +91,20 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       /** Sets the lastValue of the pk. */
       getLastPkValue(): any {
         return this.primaryKeyColumn.lastValue;
+      }
+
+      /**
+       * Refreshes the current entity.
+       */
+      refresh(): Promise<any> {
+        const pk = this.getLastPkValue();
+        return EntityFetchService.findEntityById<T>(spreadSheetName, tableName, entityName, pk).then(result => {
+          Object.keys(result).forEach(key => {
+            // @ts-ignore
+            this[key] = result[key];
+          });
+          return Promise.resolve(this);
+        });
       }
 
       /** Finds all entities. */

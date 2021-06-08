@@ -247,7 +247,6 @@ function unlockSheet(sheet: Sheet) {
  * @param sheetList list of sheets
  */
 function unlockSheetList(sheetList: Sheet[]) {
-  console.log("WWW unlocking sheets");
   sheetList.forEach(sheet => sheet.protect().remove());
 }
 

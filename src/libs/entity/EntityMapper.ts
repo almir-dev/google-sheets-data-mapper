@@ -21,6 +21,8 @@ class EntityMapperImpl {
     for (const element of data) {
       const targetClassObject = new EntityManager.entityMap[targetClassName]();
       const result = this.createEntityObject<T>(targetClassObject, element);
+      // @ts-ignore
+      result.setCheckedOut();
       results.push(result);
     }
 

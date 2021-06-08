@@ -8,6 +8,7 @@ class EntityCrateServiceImpl {
    * @param entity entry
    */
   create(entity: any): Promise<any> {
+    this.createId(entity);
     const values = this.findValuesFromEntity(entity);
     const pk = entity.getPrimaryKeyColumn();
     const pkColumnName = pk.columnId;
@@ -44,6 +45,36 @@ class EntityCrateServiceImpl {
 
     const sortedColumnIds = Object.keys(propertyMap).sort();
     return sortedColumnIds.map(id => propertyMap[id]);
+  }
+
+  /**
+   * Creates an id for the entity if it doesn't have one.
+   */
+  private createId(entry: any) {
+    const pkField = entry.getPrimaryKeyColumn().fieldPropertyName;
+    // @ts-ignore
+    if (!entry.isCheckedOut()) {
+      const id = this.generateUniqueId();
+      // @ts-ignore
+      entry[pkField] = id;
+      entry.setPkValue(id);
+    }
+  }
+
+  /**
+   * Generate an almost unique id ( hash + current timestamp)
+   */
+  private generateUniqueId(): string {
+    const timestamp = new Date().getTime();
+
+    let h = 0;
+    const s = JSON.stringify(this);
+    for (let i = 0; i < s.length; ++i) {
+      h = 31 * h + s.charCodeAt(i);
+    }
+
+    const id = h + timestamp;
+    return "id" + id.toString();
   }
 }
 

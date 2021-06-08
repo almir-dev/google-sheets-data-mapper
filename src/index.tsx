@@ -21,11 +21,6 @@ function AppContent() {
 }
 
 function App() {
-  StudentEntity.findById<StudentEntity>("id15").then(result => {
-    console.log("WWW result", result);
-    result.name = "Jack22";
-    result.save();
-  });
   return <FacultyView />;
 }
 

@@ -31,6 +31,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       private readonly primaryKeyColumn: ColumnProperties;
+      private checkedOut = false;
 
       constructor(...args: any[]) {
         super(...args);
@@ -105,6 +106,14 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
           });
           return Promise.resolve(this);
         });
+      }
+
+      public setCheckedOut() {
+        this.checkedOut = true;
+      }
+
+      public isCheckedOut() {
+        return this.checkedOut;
       }
 
       /**

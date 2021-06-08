@@ -90,7 +90,7 @@ class EntityUpdateServiceImpl {
     const values = sortedColumnIds.map(id => propertyMap[id]);
 
     const operation: UpdateOperation = {
-      spreadSheetName,
+      spreadsheetId: spreadSheetName,
       sheetName,
       lookupColumnName,
       updateValues: [{ lookupValue, values }]

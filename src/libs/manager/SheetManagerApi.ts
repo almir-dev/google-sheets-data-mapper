@@ -10,7 +10,7 @@ export type GoogleAppendValuesResponse = gapi.client.sheets.AppendValuesResponse
  * @updateValue value which will be updated into the sheet
  */
 export interface UpdateOperation {
-  spreadSheetName: string;
+  spreadsheetId: string;
   sheetName: string;
   lookupColumnName: string;
   updateValues: UpdateValue[];
@@ -29,18 +29,18 @@ export interface UpdateValue {
 export interface SheetManagerApi {
   /**
    * Searches all values from a sheet.
-   * @param spreadSheetName name of the spreadSheet
+   * @param spreadsheetId id of the spreadSheet
    * @param sheetName name of sheet
    */
-  findWithoutCriteria(spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse>;
+  findWithoutCriteria(spreadsheetId: string, sheetName: string): Promise<GoogleQueryResponse>;
 
   /**
    * Searches all values from a sheet.
    * @param query query string
-   * @param spreadSheetName spreadsheet name
+   * @param spreadsheetId spreadsheet id
    * @param sheetName sheet name
    */
-  findByCriteria(query: string, spreadSheetName: string, sheetName: string): Promise<GoogleQueryResponse>;
+  findByCriteria(query: string, spreadsheetId: string, sheetName: string): Promise<GoogleQueryResponse>;
 
   /**
    * Creates a new row in a sheet.

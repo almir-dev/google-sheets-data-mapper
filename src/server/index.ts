@@ -9,7 +9,7 @@ export type HtmlOutput = GoogleAppsScript.HTML.HtmlOutput;
  * @updateValue value which will be updated into the sheet
  */
 interface UpdateOperation {
-  spreadSheetName: string;
+  spreadsheetId: string;
   sheetName: string;
   lookupColumnName: string;
   updateValues: UpdateValue[];
@@ -52,10 +52,9 @@ function updateManySheetRows(updateOperations: UpdateOperation[]) {
   const sheetMap: SheetMap = {};
 
   for (const operation of updateOperations) {
-    const { spreadSheetName, sheetName } = operation;
+    const { spreadsheetId, sheetName } = operation;
     if (!sheetMap[sheetName]) {
-      const spreadSheetId = getSpreadSheetIdByName(spreadSheetName);
-      sheetMap[sheetName] = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
+      sheetMap[sheetName] = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
     }
   }
 
@@ -145,13 +144,12 @@ function updateSingleSheetRow(sheet: Sheet, lookupColumnName: string, updateValu
 
 /**
  * Delete a row in a sheet.
- * @param spreadSheetName name of the spreadsheet
+ * @param spreadSheetId id of the spreadsheet
  * @param sheetName name of sheet
  * @param lookupColumnName name of the lookup column
  * @param lookupValue value used to lookup which row to delete
  */
-function deleteSheetRow(spreadSheetName: string, sheetName: string, lookupColumnName: string, lookupValue: object) {
-  const spreadSheetId = getSpreadSheetIdByName(spreadSheetName);
+function deleteSheetRow(spreadSheetId: string, sheetName: string, lookupColumnName: string, lookupValue: object) {
   const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
 
   lockSheet(sheet);
@@ -165,7 +163,7 @@ function deleteSheetRow(spreadSheetName: string, sheetName: string, lookupColumn
 
 /**
  * Create a new row in a sheet.
- * @param spreadsheetName name of the spreadsheet
+ * @param spreadSheetId id of the spreadsheet
  * @param sheetName name of the sheet
  * @param values values which will be inserted in the row
  * @param columnName name of the lookupColumn to check for duplicates
@@ -173,13 +171,12 @@ function deleteSheetRow(spreadSheetName: string, sheetName: string, lookupColumn
  * @return {{errorMessage: string}} error message in case there was an error
  */
 function createSheetRow(
-  spreadsheetName: string,
+  spreadSheetId: string,
   sheetName: string,
   values: string[],
   columnName: string,
   lookupValue: string
 ) {
-  const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
   const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
 
   lockSheet(sheet);
@@ -279,17 +276,17 @@ function letterToColumn(columnName: string) {
   }
   return column - 1;
 }
-
-/**
- * Retrieves the id of the spreadsheet.
- * @param spreadsheetName name of the spreadsheet
- * @return id of the spreadsheet
- */
-function getSpreadSheetIdByName(spreadsheetName: string) {
-  return DriveApp.getFilesByName(spreadsheetName)
-    .next()
-    .getId();
-}
+//
+// /**
+//  * Retrieves the id of the spreadsheet.
+//  * @param spreadsheetName name of the spreadsheet
+//  * @return id of the spreadsheet
+//  */
+// function getSpreadSheetIdByName(spreadsheetName: string) {
+//   return DriveApp.getFilesByName(spreadsheetName)
+//     .next()
+//     .getId();
+// }
 
 /**
  * Retrieves the row number of the searched value.
@@ -315,12 +312,11 @@ function getToken() {
   return ScriptApp.getOAuthToken();
 }
 
-function findWithoutCriteria(spreadsheetName: string, sheetName: string) {
+function findWithoutCriteria(spreadsheetId: string, sheetName: string) {
   const newToken = getToken();
-  const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
 
   let request = "https://docs.google.com/spreadsheets/d/";
-  request += spreadSheetId;
+  request += spreadsheetId;
   request += "/gviz/tq?access_token=" + newToken;
   request += "&select%20*%20";
   request += "&sheet=" + sheetName;
@@ -330,12 +326,11 @@ function findWithoutCriteria(spreadsheetName: string, sheetName: string) {
   return convertQueryResponseToDataArray(response);
 }
 
-function findWithCriteria(query: string, spreadsheetName: string, sheetName: string) {
+function findWithCriteria(query: string, spreadsheetId: string, sheetName: string) {
   const newToken = getToken();
-  const spreadSheetId = getSpreadSheetIdByName(spreadsheetName);
 
   let request = "https://docs.google.com/spreadsheets/d/";
-  request += spreadSheetId;
+  request += spreadsheetId;
   request += "/gviz/tq?access_token=" + newToken;
   request += "&tq=select%20*%20 WHERE " + query;
   request += "&sheet=" + sheetName;
@@ -373,7 +368,5 @@ global.updateManySheetRows = updateManySheetRows;
 global.deleteSheetRow = deleteSheetRow;
 // @ts-ignore
 global.createSheetRow = createSheetRow;
-// @ts-ignore
-global.getCurrentUserEmail = getCurrentUserEmail;
 // @ts-ignore
 global.doGet = doGet;

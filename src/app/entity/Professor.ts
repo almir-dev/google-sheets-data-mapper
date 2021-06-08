@@ -3,7 +3,7 @@ import { Column, Dto, ManyToOne, PrimaryKey } from "../../libs/entity/Dto";
 import { DepartmentEntity } from "./DepartmentEntity";
 import { ExtracurricularActivityEntity } from "./ExtracurricularActivityEntity";
 
-@Entity("StudentsSpreadsheet", "ProfessorTable", "ProfessorEntity")
+@Entity("1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A", "ProfessorTable", "ProfessorEntity")
 export class ProfessorEntity extends Dto<ProfessorEntity> {
   @PrimaryKey()
   @Column("A")

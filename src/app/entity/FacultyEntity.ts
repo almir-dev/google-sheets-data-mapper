@@ -2,7 +2,7 @@ import { Entity } from "../../libs/entity/Entity";
 import { Column, Dto, OneToMany, PrimaryKey } from "../../libs/entity/Dto";
 import { DepartmentEntity } from "./DepartmentEntity";
 
-@Entity("StudentsSpreadsheet", "FacultyTable", "FacultyEntity")
+@Entity("1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A", "FacultyTable", "FacultyEntity")
 export class FacultyEntity extends Dto<FacultyEntity> {
   @PrimaryKey()
   @Column("A")

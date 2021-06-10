@@ -6,13 +6,13 @@ class EntityDeleteServiceImpl {
    * @param entity
    */
   delete(entity: any): Promise<void> {
-    const pkColumnName = entity.getPrimaryKeyColumn().fieldPropertyName;
-    const pkValue = entity[pkColumnName];
+    const pkColumnName = entity.getPrimaryKeyColumn().columnId;
+    const pkValue = entity[entity.getPrimaryKeyColumn().fieldPropertyName];
 
-    const spreadSheetName = entity.getSpreadsheetName();
+    const spreadsheetId = entity.getSpreadsheetId();
     const sheetName = entity.getTableName();
 
-    return SheetManager.delete(spreadSheetName, sheetName, pkColumnName, pkValue);
+    return SheetManager.delete(spreadsheetId, sheetName, pkColumnName, pkValue);
   }
 }
 

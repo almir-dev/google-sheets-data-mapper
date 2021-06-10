@@ -76,8 +76,8 @@ export class Dto<T> {
     return Promise.resolve([]);
   }
 
-  static create<T>(entry: T): Promise<void> {
-    return Promise.resolve();
+  static create<T>(entry: T): Promise<T> {
+    return Promise.resolve(({} as unknown) as T);
   }
 
   static delete<T>(entry: T): Promise<void> {

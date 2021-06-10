@@ -7,17 +7,19 @@ class EntityCrateServiceImpl {
    * Creates a new entity.
    * @param entity entry
    */
-  create(entity: any): Promise<any> {
-    this.createId(entity);
+  create(entity: any): Promise<string> {
+    const id = this.createId(entity);
     const values = this.findValuesFromEntity(entity);
     const pk = entity.getPrimaryKeyColumn();
     const pkColumnName = pk.columnId;
     const pkValue = entity[pk.fieldPropertyName];
 
-    const spreadSheetName = entity.getSpreadsheetName();
+    const spreadSheetName = entity.getSpreadsheetId();
     const sheetName = entity.getTableName();
 
-    return SheetManager.create(spreadSheetName, sheetName, values, pkColumnName, pkValue);
+    return SheetManager.create(spreadSheetName, sheetName, values, pkColumnName, pkValue).then(() =>
+      Promise.resolve(id)
+    );
   }
 
   /**
@@ -50,7 +52,7 @@ class EntityCrateServiceImpl {
   /**
    * Creates an id for the entity if it doesn't have one.
    */
-  private createId(entry: any) {
+  private createId(entry: any): string {
     const pkField = entry.getPrimaryKeyColumn().fieldPropertyName;
     // @ts-ignore
     if (!entry.isCheckedOut()) {
@@ -59,6 +61,8 @@ class EntityCrateServiceImpl {
       entry[pkField] = id;
       entry.setPkValue(id);
     }
+
+    return entry[pkField];
   }
 
   /**

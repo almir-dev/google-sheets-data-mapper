@@ -27,7 +27,7 @@ interface ColumnProperties {
   lastValue?: any;
 }
 
-export function Entity(spreadSheetName: string, tableName: string, entityName: string) {
+export function Entity(spreadSheetId: string, tableName: string, entityName: string) {
   return function<T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       private readonly primaryKeyColumn: ColumnProperties;
@@ -75,8 +75,8 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       }
 
       /** Return the associated spreadsheet name. */
-      getSpreadsheetName() {
-        return spreadSheetName;
+      getSpreadsheetId() {
+        return spreadSheetId;
       }
 
       /** Returns the meta information of the tables primary key.*/
@@ -99,12 +99,12 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        */
       refresh(): Promise<any> {
         const pk = this.getLastPkValue();
-        return EntityFetchService.findEntityById<T>(spreadSheetName, tableName, entityName, pk).then(result => {
+        return EntityFetchService.findEntityById<T>(spreadSheetId, tableName, entityName, pk).then(result => {
           Object.keys(result).forEach(key => {
             // @ts-ignore
             this[key] = result[key];
           });
-          return Promise.resolve(this);
+          return Promise.resolve(result);
         });
       }
 
@@ -125,12 +125,12 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
 
       /** Finds all entities. */
       static findAll(): Promise<T[]> {
-        return (EntityFetchService.findEntities(spreadSheetName, tableName, entityName) as unknown) as Promise<T[]>;
+        return (EntityFetchService.findEntities(spreadSheetId, tableName, entityName) as unknown) as Promise<T[]>;
       }
 
       /** Finds entity by id. */
       static findById(id: string): Promise<T> {
-        return (EntityFetchService.findEntityById(spreadSheetName, tableName, entityName, id) as unknown) as Promise<T>;
+        return (EntityFetchService.findEntityById(spreadSheetId, tableName, entityName, id) as unknown) as Promise<T>;
       }
 
       /**
@@ -140,7 +140,7 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
       static find(criteria: QueryOperation): Promise<T[]> {
         const queryString = CriteriaService.toQueryString(criteria);
         return (EntityFetchService.findEntitiesWithQuery(
-          spreadSheetName,
+          spreadSheetId,
           tableName,
           entityName,
           queryString
@@ -151,8 +151,12 @@ export function Entity(spreadSheetName: string, tableName: string, entityName: s
        * Creates a new entity.
        * @param entry entry
        */
-      static create(entry: any): Promise<void> {
-        return EntityCreateService.create(entry);
+      static create(entry: any): Promise<T> {
+        return EntityCreateService.create(entry).then((id: string) => {
+          const pkField = entry.getPrimaryKeyColumn().fieldPropertyName;
+          entry[pkField] = id;
+          return entry;
+        });
       }
 
       /**

@@ -151,14 +151,26 @@ function updateSingleSheetRow(sheet: Sheet, lookupColumnName: string, updateValu
  */
 function deleteSheetRow(spreadSheetId: string, sheetName: string, lookupColumnName: string, lookupValue: object) {
   const sheet = SpreadsheetApp.openById(spreadSheetId).getSheetByName(sheetName);
-
   lockSheet(sheet);
 
-  const columnNumber = letterToColumn(lookupColumnName);
-  const rowToDelete = getRowNumberByLookupValue(sheet, columnNumber, lookupValue);
-  sheet.deleteRow(rowToDelete);
+  try {
+    const columnNumber = letterToColumn(lookupColumnName);
+    const rowToDelete = getRowNumberByLookupValue(sheet, columnNumber, lookupValue);
+    sheet.deleteRow(rowToDelete);
+  } catch (error) {
+    unlockSheet(sheet);
+    throw new Error("Failed to delete row " + error);
+  }
 
   unlockSheet(sheet);
+}
+
+function foo() {
+  const sheetId = "1Bswrjv8evr2PAP5Cmnfb3XbI5voxMeDwBdvLxurf-5A";
+  const sheetName = "StudentTable";
+  const pkField = "id";
+  const id = "id1623181921547";
+  deleteSheetRow(sheetId, sheetName, pkField, (id as unknown) as object);
 }
 
 /**
@@ -358,6 +370,8 @@ export function doGet() {
 
 // Expose public functions by attaching to `global`
 
+// @ts-ignore
+global.foo = foo;
 // @ts-ignore
 global.findWithoutCriteria = findWithoutCriteria;
 // @ts-ignore

@@ -107,7 +107,7 @@ class EntityFetchServiceImpl {
       if (oneToManyColumn) {
         const { referenceEntity, mappedBy } = oneToManyColumn;
         const targetClassObject = new EntityManager.entityMap[referenceEntity]();
-        const spreadSheetName = targetClassObject.getSpreadsheetName();
+        const spreadSheetName = targetClassObject.getSpreadsheetId();
         const sheetName = targetClassObject.getTableName();
         const targetContextKey = [spreadSheetName, sheetName].join("-");
         const targetContext = context[targetContextKey];
@@ -135,7 +135,7 @@ class EntityFetchServiceImpl {
         const { referenceEntity } = manyToOneColumn;
         const targetClassObject = new EntityManager.entityMap[referenceEntity]();
 
-        const spreadSheetName = targetClassObject.getSpreadsheetName();
+        const spreadSheetName = targetClassObject.getSpreadsheetId();
         const sheetName = targetClassObject.getTableName();
 
         const targetContextKey = [spreadSheetName, sheetName].join("-");
@@ -209,7 +209,7 @@ class EntityFetchServiceImpl {
       return [];
     }
 
-    const spreadSheetName = targetClassObject.getSpreadsheetName();
+    const spreadSheetName = targetClassObject.getSpreadsheetId();
     const sheetName = targetClassObject.getTableName();
     const entityName = targetClassObject.getName();
 

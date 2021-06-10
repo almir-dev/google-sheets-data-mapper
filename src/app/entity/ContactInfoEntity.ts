@@ -11,3 +11,5 @@ export class ContactInfoEntity extends Dto<ContactInfoEntity> {
   @Column("C")
   phoneNumber = "";
 }
+
+export const ContactInfoInstance = new ContactInfoEntity();

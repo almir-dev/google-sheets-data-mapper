@@ -35,6 +35,7 @@ class EntityUpdateServiceImpl {
    */
   private updateSingle(entity: any): Promise<void> {
     const updateOperations: UpdateOperation[] = this.extractUpdateOperations(entity);
+    console.log("WWW updating single", updateOperations);
     return SheetManager.update(updateOperations);
   }
 
@@ -50,13 +51,13 @@ class EntityUpdateServiceImpl {
     // This is a bug, but a feature as well.
     // It prevents bi-directional recursive operation nesting, because for some reason the nested
     // bi-directional entries do not have entity methods.
-    if (!entry.getSpreadsheetName) {
+    if (!entry.getSpreadsheetId) {
       return [];
     }
 
     const updateOperations: UpdateOperation[] = [];
 
-    const spreadSheetName = entry.getSpreadsheetName();
+    const spreadSheetName = entry.getSpreadsheetId();
     const sheetName = entry.getTableName();
     const lookupColumnName = entry.getPrimaryKeyColumn().columnId;
 

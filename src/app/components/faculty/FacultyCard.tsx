@@ -118,7 +118,6 @@ export function FacultyCard({ faculty }: { faculty: FacultyEntity }) {
             Classes:
             <DataList data={facultyClasses} />
           </Typography>
-          <Typography paragraph>Number of students:</Typography>
         </CardContent>
       </Collapse>
     </Card>

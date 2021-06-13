@@ -38,7 +38,7 @@ class FacultyServiceImpl {
     return DepartmentEntity.findAll<DepartmentEntity>().then(departments => {
       const departmentIds = departments.filter(d => d.faculty.id === facultyId).map(d => d.id);
       return ProfessorEntity.findAll<ProfessorEntity>().then(professors => {
-        return professors.filter(p => departmentIds.indexOf(p.id) !== -1).map(p => p.name);
+        return professors.filter(p => departmentIds.indexOf(p.department.id) !== -1).map(p => p.name);
       });
     });
   }
@@ -56,7 +56,7 @@ class FacultyServiceImpl {
     return DepartmentEntity.findAll<DepartmentEntity>().then(departments => {
       const departmentIds = departments.filter(d => d.faculty.id === facultyId).map(d => d.id);
       return ClassEntity.findAll<ProfessorEntity>().then(clazz => {
-        return clazz.filter(c => departmentIds.indexOf(c.id) !== -1).map(c => c.name);
+        return clazz.filter(c => departmentIds.indexOf(c.department.id) !== -1).map(c => c.name);
       });
     });
   }

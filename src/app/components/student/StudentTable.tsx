@@ -5,7 +5,7 @@ import "./StudentTable.scss";
 import { StudentService } from "./StudentService";
 import { CircularProgress } from "@material-ui/core";
 import { ContactInfoEntity, ContactInfoInstance } from "../../entity/ContactInfoEntity";
-import { whereEq } from "../../../libs/criteria/QueryOperation";
+import { whereEq } from "../../../datamapper/libs/criteria/QueryOperation";
 import { ExtracurricularActivityEntity } from "../../entity/ExtracurricularActivityEntity";
 
 const TableColumns: Column<StudentEntity>[] = [

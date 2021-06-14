@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { StudentEntity } from "./app/entity/StudentEntity";
-import { EntityManager } from "./libs/entity/EntityManager";
+import { EntityManager } from "./datamapper/libs/entity/EntityManager";
 import { FacultyEntity } from "./app/entity/FacultyEntity";
 import { DepartmentEntity } from "./app/entity/DepartmentEntity";
 import { ProfessorEntity } from "./app/entity/Professor";

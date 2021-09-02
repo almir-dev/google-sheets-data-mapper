@@ -30,6 +30,7 @@ const isProd = process.env.NODE_ENV === 'production';
  ********************************/
 // our destination directory
 const destination = path.resolve(__dirname, 'dist');
+const publicDestination = path.resolve(__dirname, 'public');
 
 // define server paths
 const serverEntry = './src/datamapper/server/index.ts';
@@ -88,11 +89,15 @@ const sharedClientAndServerConfig = {
 const clientConfig = {
   ...sharedClientAndServerConfig,
   mode: isProd ? 'production' : 'development',
+  devtool: "source-map",
   output: {
     path: destination,
     // this file will get added to the html template inline
     // and should be put in .claspignore so it is not pushed
     filename: 'main.js',
+    devtoolLineToLine: true,
+    sourceMapFilename: "./bundle.js.map",
+    pathinfo: true
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],

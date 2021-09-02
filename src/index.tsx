@@ -21,7 +21,7 @@ function AppContent() {
 }
 
 function App() {
-  return <FacultyView />;
+  return null;
 }
 
 function initEntityClasses(): boolean {
@@ -36,3 +36,27 @@ function initEntityClasses(): boolean {
 }
 
 ReactDOM.render(<AppContent />, document.getElementById("root"));
+
+export function executeGeneration() {
+  console.log("Start");
+  initEntityClasses();
+
+  // @ts-ignore
+  document.getElementById("myInput").addEventListener("click", function() {
+    FacultyEntity.findAll<FacultyEntity>().then(faculties => {
+      const list = document.getElementById('list-items');
+
+      faculties.forEach(f => {
+        const entry = document.createElement('li');
+        entry.appendChild(document.createTextNode(f.name));
+
+        // @ts-ignore
+        list.appendChild(entry);
+      });
+    })
+  });
+
+  console.log("End");
+}
+
+executeGeneration();

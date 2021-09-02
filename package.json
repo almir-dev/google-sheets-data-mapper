@@ -1,6 +1,7 @@
 {
   "name": "google-sheets-app",
   "version": "0.1.0",
+  "main": "./public/dataMapperLib.js",
   "private": true,
   "dependencies": {
     "@google/clasp": "^2.3.0",
@@ -97,7 +98,7 @@
     "lint": "eslint src --ext .ts --ext .tsx",
     "setupGoo": "rimraf .clasp.json && clasp create --type webapp --title \"Diploma\" --rootDir ./dist",
     "cleanDist": "rm -rf ./dist/code.js && rm -rf ./dist/diploma.html",
-    "redeploy": "clasp deploy --description release --deploymentId AKfycbz1cswrwCuLWlGYCByEIiLyCqa3krne7IV2DBZ0GkI7XUBc8buqiyucMeT0iTuSVmEsLw",
+    "redeploy": "clasp deploy --description release --deploymentId AKfycbzgv2vW5fyLnIYPwxxZYJRGlDy8bI7-GByw8-y5nCJ6mAPnzSPfaGM6Zf1nGGg2ir9dWA",
     "buildGoo": "cross-env NODE_ENV=production webpack",
     "deployGoo": "npm run cleanDist && npm run buildGoo && clasp push && npm run redeploy"
   },

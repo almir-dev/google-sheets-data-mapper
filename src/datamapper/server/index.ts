@@ -365,11 +365,41 @@ function convertQueryResponseToDataArray(responseText: string) {
  */
 
 export function doGet() {
-  return HtmlService.createTemplateFromFile("diploma.html").evaluate();
+  const result = HtmlService.createTemplateFromFile("diploma.html").evaluate();
+  const c1 = HtmlService.createTemplateFromFile("diploma.html").getCode();
+  const c2 = HtmlService.createTemplateFromFile("diploma.html").getCodeWithComments();
+  const c3 = HtmlService.createTemplateFromFile("diploma.html").getRawContent();
+  const c4 = HtmlService.createTemplateFromFile("diploma.html").evaluate().asTemplate().evaluate();
+
+
+  // console.log("C1", c1);
+  // console.log("C2", c2);
+  // console.log("C3", c3);
+
+  const content = c4.getContent();
+
+  const parts: string[] = [];
+  const amount = 10;
+  let start = 0;
+  let step = content.length / amount;
+  for(let i = 0; i < amount; ++i) {
+    const c = content.substr(start, step);
+    start += step;
+    parts.push(c);
+  }
+
+  for(let i = 0; i < amount; ++i) {
+    console.log("Result is: ", parts[i]);
+  }
+
+
+  return result;
 }
 
 // Expose public functions by attaching to `global`
 
+// @ts-ignore
+global.doGet = doGet;
 // @ts-ignore
 global.foo = foo;
 // @ts-ignore
@@ -382,5 +412,3 @@ global.updateManySheetRows = updateManySheetRows;
 global.deleteSheetRow = deleteSheetRow;
 // @ts-ignore
 global.createSheetRow = createSheetRow;
-// @ts-ignore
-global.doGet = doGet;
